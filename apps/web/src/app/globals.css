@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-background text-text antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-image:
+      radial-gradient(circle at 12% -10%, rgba(14, 165, 233, 0.12), transparent 45%),
+      radial-gradient(circle at 100% 10%, rgba(0, 255, 156, 0.07), transparent 55%);
+    background-attachment: fixed;
+  }
+  ::selection {
+    background: rgba(0, 255, 156, 0.35);
+    color: #f8fafc;
+  }
+  :focus-visible {
+    outline: 2px solid #0ea5e9;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgba(11, 16, 32, 0.6);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(14, 165, 233, 0.4);
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(14, 165, 233, 0.7);
+  }
+}
+
+@layer components {
+  .glass {
+    @apply backdrop-blur-xl bg-surface/60 border border-white/5;
+  }
+  .glass-strong {
+    @apply backdrop-blur-2xl bg-surface/80 border border-white/10;
+  }
+  .ring-glow {
+    box-shadow:
+      0 0 0 1px rgba(14, 165, 233, 0.35),
+      0 0 30px -8px rgba(14, 165, 233, 0.55);
+  }
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(17, 24, 39, 0.6) 0%,
+      rgba(30, 41, 59, 0.8) 50%,
+      rgba(17, 24, 39, 0.6) 100%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer rounded-lg;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
