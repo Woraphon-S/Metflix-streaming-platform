@@ -1,8 +1,9 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import { Compass, ListVideo, Sparkles } from 'lucide-react';
+import { Compass } from 'lucide-react';
 import { AppShell } from '@/components/layout/AppShell';
 import { HeroBanner } from '@/components/hero/HeroBanner';
 import { ContentCarousel } from '@/components/carousel/ContentCarousel';
@@ -16,157 +17,176 @@ import { seriesService } from '@/services/series.service';
 import { watchHistoryService } from '@/services/watch-history.service';
 import { watchlistService } from '@/services/watchlist.service';
 import { useAuthStore } from '@/stores/auth.store';
+import { GENRE_LABELS, GENRE_ORDER } from '@/lib/genres';
+import type { MovieSummary, SeriesSummary } from '@metflix/shared-types';
+
+type CatalogItem = MovieSummary | SeriesSummary;
+
+// One consistent portrait ("tall") card, picked by item type.
+function PortraitCard({ item }: { item: CatalogItem }) {
+  return 'seasonsCount' in item ? (
+    <SeriesCard series={item} />
+  ) : (
+    <MovieCard movie={item} />
+  );
+}
+
+const LANDSCAPE_W = 'w-[260px] flex-shrink-0 sm:w-[300px]';
+const LANDSCAPE_SKELETON = `${LANDSCAPE_W} aspect-[16/9] rounded-xl`;
 
 export default function BrowsePage() {
   const user = useAuthStore((s) => s.user);
+  const activeProfile = useAuthStore((s) => s.activeProfile);
 
   const moviesQ = useQuery({
     queryKey: ['movies', 'browse'],
-    queryFn: () => moviesService.list({ page: 1, pageSize: 20 }),
+    queryFn: () => moviesService.list({ page: 1, pageSize: 30 }),
   });
   const seriesQ = useQuery({
     queryKey: ['series', 'browse'],
-    queryFn: () => seriesService.list({ page: 1, pageSize: 20 }),
+    queryFn: () => seriesService.list({ page: 1, pageSize: 30 }),
   });
   const continueQ = useQuery({
-    queryKey: ['watch-history', 'continue'],
+    queryKey: ['watch-history', 'continue', activeProfile?.id],
     queryFn: () => watchHistoryService.continueWatching(),
-    enabled: !!user,
+    enabled: !!user && !!activeProfile,
   });
   const myListQ = useQuery({
-    queryKey: ['watchlist'],
+    queryKey: ['watchlist', activeProfile?.id],
     queryFn: () => watchlistService.list(),
-    enabled: !!user,
+    enabled: !!user && !!activeProfile,
   });
 
-  const featured =
-    moviesQ.data?.items?.[0] ?? seriesQ.data?.items?.[0] ?? null;
+  const movies = moviesQ.data?.items ?? [];
+  const series = seriesQ.data?.items ?? [];
+  const featured = movies[0] ?? series[0] ?? null;
+  const loading = moviesQ.isLoading || seriesQ.isLoading;
+
+  const topTen = useMemo<CatalogItem[]>(
+    () =>
+      [...movies, ...series].sort((a, b) => b.viewCount - a.viewCount).slice(0, 10),
+    [movies, series],
+  );
+
+  // Group every title by genre, in the configured display order.
+  const genreRows = useMemo(() => {
+    const groups = new Map<string, CatalogItem[]>();
+    for (const item of [...movies, ...series]) {
+      const list = groups.get(item.genre) ?? [];
+      list.push(item);
+      groups.set(item.genre, list);
+    }
+    return GENRE_ORDER.map((genre) => ({ genre, items: groups.get(genre) ?? [] })).filter(
+      (row) => row.items.length > 0,
+    );
+  }, [movies, series]);
 
   return (
     <AppShell>
-      {moviesQ.isLoading || seriesQ.isLoading ? (
+      {loading ? (
         <div className="h-[60vh] w-full bg-gradient-to-b from-surface/60 to-background animate-pulse" />
       ) : featured ? (
         <HeroBanner
           item={
             'durationSeconds' in featured
-              ? { kind: 'movie' as const, ...featured }
-              : { kind: 'series' as const, ...featured }
+              ? { kind: 'movie' as const, ...(featured as MovieSummary) }
+              : { kind: 'series' as const, ...(featured as SeriesSummary) }
           }
         />
       ) : (
-        <section className="px-4 pt-32 pb-16 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <section className="mx-auto max-w-[1800px] px-4 pt-32 pb-16 sm:px-6 lg:px-8">
           <EmptyState
-            icon={<Sparkles className="h-8 w-8" />}
-            title="No content yet"
-            description="An admin needs to publish a movie or series to populate the catalog."
+            icon={<Compass className="h-8 w-8" />}
+            title="ยังไม่มีเนื้อหา"
+            description="ผู้ดูแลต้องเผยแพร่ภาพยนตร์หรือซีรีส์ก่อน จึงจะแสดงที่นี่"
           />
         </section>
       )}
 
-      <div className="mx-auto max-w-7xl space-y-10 px-4 pb-20 sm:px-6 lg:px-8 -mt-8 relative z-10">
-        {user && continueQ.data && continueQ.data.length > 0 && (
+      <div className="relative z-10 mx-auto -mt-8 max-w-[1800px] space-y-12 px-4 pb-20 sm:px-6 lg:px-8">
+        {/* Top 10 — portrait posters with big rank numbers */}
+        {topTen.length > 0 && (
           <ContentCarousel
-            title="Continue watching"
-            subtitle="Pick up right where you left off"
+            title="10 อันดับสูงสุดในไทยวันนี้"
+            subtitle="เรื่องที่มีคนดูมากที่สุด"
           >
+            {topTen.map((item, i) => (
+              <div
+                key={`${'seasonsCount' in item ? 's' : 'm'}-${item.id}`}
+                className="relative flex-shrink-0 pl-[3rem] sm:pl-[4rem]"
+              >
+                {/* Rank number sits behind the card and is absolute, so it never
+                    shifts the card — every poster stays on the same baseline. */}
+                <span className="pointer-events-none absolute bottom-0 left-0 z-0 select-none font-display font-black leading-[0.72] text-transparent text-[7rem] sm:text-[9rem] [-webkit-text-stroke:3px_rgba(148,163,184,0.5)]">
+                  {i + 1}
+                </span>
+                <div className="relative z-10 w-[130px] sm:w-[160px]">
+                  <PortraitCard item={item} />
+                </div>
+              </div>
+            ))}
+          </ContentCarousel>
+        )}
+
+        {/* Continue watching */}
+        {user && continueQ.data && continueQ.data.length > 0 && (
+          <ContentCarousel title="ดูต่อ" subtitle="ดูต่อจากที่ค้างไว้">
             {continueQ.data.map((item) => (
-              <div key={item.id} className="w-[280px] flex-shrink-0 sm:w-[320px]">
+              <div key={item.id} className={LANDSCAPE_W}>
                 <ContinueWatchingCard item={item} />
               </div>
             ))}
           </ContentCarousel>
         )}
 
-        <ContentCarousel
-          title="Featured movies"
-          subtitle="Cinematic picks from the catalog"
-          action={
-            <Link
-              href="/browse"
-              className="hidden text-xs uppercase tracking-wide text-primary-400 hover:text-primary sm:inline-flex"
-            >
-              See all
-            </Link>
-          }
-        >
-          {moviesQ.isLoading
-            ? Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton
-                  key={i}
-                  className="aspect-[2/3] w-[150px] flex-shrink-0 sm:w-[180px]"
-                />
-              ))
-            : moviesQ.data?.items.map((movie) => (
-                <div
-                  key={movie.id}
-                  className="w-[150px] flex-shrink-0 sm:w-[180px]"
-                >
-                  <MovieCard movie={movie} />
-                </div>
-              ))}
-        </ContentCarousel>
-
-        <ContentCarousel
-          title="Series spotlight"
-          subtitle="Binge a new universe tonight"
-        >
-          {seriesQ.isLoading
-            ? Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton
-                  key={i}
-                  className="aspect-[2/3] w-[150px] flex-shrink-0 sm:w-[180px]"
-                />
-              ))
-            : seriesQ.data?.items.map((s) => (
-                <div key={s.id} className="w-[150px] flex-shrink-0 sm:w-[180px]">
-                  <SeriesCard series={s} />
-                </div>
-              ))}
-        </ContentCarousel>
-
-        {moviesQ.data && moviesQ.data.items.length > 1 && (
-          <ContentCarousel
-            title="Trending now"
-            subtitle="What everyone is streaming"
-          >
-            {[...moviesQ.data.items]
-              .sort((a, b) => b.viewCount - a.viewCount)
-              .slice(0, 8)
-              .map((movie) => (
-                <div
-                  key={movie.id}
-                  className="w-[280px] flex-shrink-0 sm:w-[320px]"
-                >
-                  <MovieCard movie={movie} size="lg" />
-                </div>
-              ))}
-          </ContentCarousel>
+        {/* Loading skeleton row */}
+        {loading && (
+          <div className="flex gap-4 overflow-hidden">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className={LANDSCAPE_SKELETON} />
+            ))}
+          </div>
         )}
 
+        {/* Category rows by genre — landscape cards */}
+        {genreRows.map((row) => (
+          <ContentCarousel key={row.genre} title={GENRE_LABELS[row.genre]}>
+            {row.items.map((item) => (
+              <div
+                key={`${'seasonsCount' in item ? 's' : 'm'}-${item.id}`}
+                className={LANDSCAPE_W}
+              >
+                {'seasonsCount' in item ? (
+                  <SeriesCard series={item} size="lg" />
+                ) : (
+                  <MovieCard movie={item} size="lg" />
+                )}
+              </div>
+            ))}
+          </ContentCarousel>
+        ))}
+
+        {/* My List — landscape */}
         {user && myListQ.data && myListQ.data.length > 0 && (
           <ContentCarousel
-            title="My List"
-            subtitle="Saved for later"
+            title="รายการของฉัน"
+            subtitle="บันทึกไว้ดูภายหลัง"
             action={
               <Link
                 href="/my-list"
                 className="hidden text-xs uppercase tracking-wide text-emerald hover:brightness-110 sm:inline-flex"
               >
-                Manage
+                จัดการ
               </Link>
             }
           >
             {myListQ.data.map((item) => (
-              <div
-                key={item.id}
-                className="w-[150px] flex-shrink-0 sm:w-[180px]"
-              >
+              <div key={item.id} className={LANDSCAPE_W}>
                 {item.contentType === 'movie' && item.movie && (
-                  <MovieCard movie={item.movie} />
+                  <MovieCard movie={item.movie} size="lg" />
                 )}
                 {item.contentType === 'series' && item.series && (
-                  <SeriesCard series={item.series} />
+                  <SeriesCard series={item.series} size="lg" />
                 )}
               </div>
             ))}
@@ -177,43 +197,24 @@ export default function BrowsePage() {
           <section className="glass rounded-3xl p-8 text-center">
             <Compass className="mx-auto h-10 w-10 text-emerald" />
             <h2 className="mt-3 font-display text-2xl font-bold">
-              Sign in to unlock the full experience
+              เข้าสู่ระบบเพื่อปลดล็อกประสบการณ์เต็มรูปแบบ
             </h2>
             <p className="mt-2 text-sm text-text-muted">
-              Save to My List, resume Continue Watching, and get notified when new content drops.
+              บันทึกในรายการของฉัน ดูต่อจากที่ค้าง และรับการแจ้งเตือนเมื่อมีเนื้อหาใหม่
             </p>
             <div className="mt-5 flex items-center justify-center gap-3">
               <Link
                 href="/login"
                 className="rounded-xl bg-primary px-5 py-2.5 text-sm font-medium hover:bg-primary-400"
               >
-                Sign in
+                เข้าสู่ระบบ
               </Link>
               <Link
                 href="/register"
                 className="rounded-xl border border-white/10 px-5 py-2.5 text-sm hover:bg-white/5"
               >
-                Create account
+                สร้างบัญชี
               </Link>
-            </div>
-          </section>
-        )}
-
-        {moviesQ.data && (
-          <section className="space-y-4">
-            <div className="flex items-center gap-2">
-              <ListVideo className="h-5 w-5 text-primary-400" />
-              <h2 className="font-display text-xl font-semibold">
-                Full catalog
-              </h2>
-            </div>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-              {moviesQ.data.items.map((movie) => (
-                <MovieCard key={movie.id} movie={movie} />
-              ))}
-              {seriesQ.data?.items.map((s) => (
-                <SeriesCard key={s.id} series={s} />
-              ))}
             </div>
           </section>
         )}

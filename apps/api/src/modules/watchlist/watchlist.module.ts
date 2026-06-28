@@ -3,9 +3,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { WatchlistController } from './watchlist.controller';
 import { WatchlistService } from './watchlist.service';
+import { ProfilesModule } from '../profiles/profiles.module';
 
 @Module({
   imports: [
+    ProfilesModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

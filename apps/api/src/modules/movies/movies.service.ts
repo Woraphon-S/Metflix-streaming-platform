@@ -20,6 +20,8 @@ const MOVIE_COLUMNS = `
   duration_seconds AS "durationSeconds",
   maturity_rating AS "maturityRating",
   status,
+  highlight,
+  genre,
   view_count AS "viewCount",
   created_at AS "createdAt",
   updated_at AS "updatedAt"
@@ -125,8 +127,8 @@ export class MoviesService {
     const movie = await this.db.queryOne<MovieRow>(
       `INSERT INTO movies
         (title, slug, description, poster_url, backdrop_url, trailer_url, video_url,
-         duration_seconds, maturity_rating, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+         duration_seconds, maturity_rating, status, highlight, genre)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        RETURNING ${MOVIE_COLUMNS}`,
       [
         dto.title,
@@ -139,6 +141,8 @@ export class MoviesService {
         dto.durationSeconds ?? 0,
         dto.maturityRating ?? 'PG-13',
         dto.status ?? 'draft',
+        dto.highlight ?? 'none',
+        dto.genre ?? 'general',
       ],
     );
     if (!movie) throw new Error('Failed to create movie');
@@ -187,7 +191,9 @@ export class MoviesService {
          video_url = COALESCE($8, video_url),
          duration_seconds = COALESCE($9, duration_seconds),
          maturity_rating = COALESCE($10, maturity_rating),
-         status = COALESCE($11, status)
+         status = COALESCE($11, status),
+         highlight = COALESCE($12, highlight),
+         genre = COALESCE($13, genre)
        WHERE id = $1
        RETURNING ${MOVIE_COLUMNS}`,
       [
@@ -202,6 +208,8 @@ export class MoviesService {
         dto.durationSeconds ?? null,
         dto.maturityRating ?? null,
         dto.status ?? null,
+        dto.highlight ?? null,
+        dto.genre ?? null,
       ],
     );
     if (!movie) throw new NotFoundException('Movie not found');

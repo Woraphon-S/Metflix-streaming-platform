@@ -21,26 +21,26 @@ export default function MyListPage() {
   return (
     <AuthGuard>
       <AppShell>
-        <div className="mx-auto max-w-7xl space-y-8 px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1800px] space-y-8 px-4 py-10 sm:px-6 lg:px-8">
           <header className="space-y-2">
             <div className="inline-flex items-center gap-2 text-emerald">
               <Bookmark className="h-5 w-5" />
-              <span className="text-xs uppercase tracking-wide">Your watchlist</span>
+              <span className="text-xs uppercase tracking-wide">รายการดูของคุณ</span>
             </div>
-            <h1 className="font-display text-3xl font-extrabold">My List</h1>
+            <h1 className="font-display text-3xl font-extrabold">รายการของฉัน</h1>
             <p className="text-text-muted">
-              Everything you have saved to watch later, in one place.
+              ทุกเรื่องที่คุณบันทึกไว้ดูภายหลัง รวมไว้ที่เดียว
             </p>
           </header>
 
           {listQ.isLoading ? (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8">
               {Array.from({ length: 8 }).map((_, i) => (
                 <Skeleton key={i} className="aspect-[2/3] w-full" />
               ))}
             </div>
           ) : listQ.data && listQ.data.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8">
               {listQ.data.map((item) => (
                 <div key={item.id}>
                   {item.contentType === 'movie' && item.movie && (
@@ -55,11 +55,11 @@ export default function MyListPage() {
           ) : (
             <EmptyState
               icon={<Compass className="h-8 w-8" />}
-              title="Your list is empty"
-              description="Browse the catalog and tap Add to My List on anything you want to come back to."
+              title="รายการของคุณว่างเปล่า"
+              description="เลือกชมจากคลัง แล้วกดเพิ่มในรายการของฉันสำหรับเรื่องที่อยากกลับมาดู"
               action={
                 <Link href="/browse">
-                  <Button variant="emerald">Discover content</Button>
+                  <Button variant="emerald">ค้นหาเนื้อหา</Button>
                 </Link>
               }
             />

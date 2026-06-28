@@ -52,11 +52,11 @@ export default function NotificationsPage() {
             <div>
               <div className="inline-flex items-center gap-2 text-primary-400">
                 <Bell className="h-5 w-5" />
-                <span className="text-xs uppercase tracking-wide">Notifications</span>
+                <span className="text-xs uppercase tracking-wide">การแจ้งเตือน</span>
               </div>
-              <h1 className="font-display text-3xl font-extrabold">All notifications</h1>
+              <h1 className="font-display text-3xl font-extrabold">การแจ้งเตือนทั้งหมด</h1>
               <p className="text-text-muted">
-                New releases, admin announcements, and system updates.
+                เนื้อหาใหม่ ประกาศจากผู้ดูแล และอัปเดตระบบ
               </p>
             </div>
             <Button
@@ -67,7 +67,7 @@ export default function NotificationsPage() {
               loading={markAll.isPending}
               disabled={!listQ.data?.some((n) => !n.isRead)}
             >
-              Mark all read
+              ทำเครื่องหมายอ่านทั้งหมด
             </Button>
           </header>
 
@@ -115,7 +115,7 @@ export default function NotificationsPage() {
                           onClick={() => markRead.mutate(n.id)}
                           className="text-emerald hover:underline"
                         >
-                          Mark as read
+                          ทำเครื่องหมายว่าอ่านแล้ว
                         </button>
                       )}
                     </div>
@@ -126,8 +126,8 @@ export default function NotificationsPage() {
           ) : (
             <EmptyState
               icon={<Bell className="h-8 w-8" />}
-              title="No notifications yet"
-              description="When new content drops or admins send announcements, you'll see them here."
+              title="ยังไม่มีการแจ้งเตือน"
+              description="เมื่อมีเนื้อหาใหม่หรือผู้ดูแลส่งประกาศ คุณจะเห็นที่นี่"
             />
           )}
         </div>

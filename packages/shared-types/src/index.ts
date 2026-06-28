@@ -6,6 +6,31 @@ export type ContentStatus = 'draft' | 'published' | 'archived';
 
 export type ContentType = 'movie' | 'series' | 'episode';
 
+export const CONTENT_HIGHLIGHTS = [
+  'none',
+  'new',
+  'top10',
+  'new_episode',
+  'new_season',
+] as const;
+export type ContentHighlight = (typeof CONTENT_HIGHLIGHTS)[number];
+
+export const CONTENT_GENRES = [
+  'anime',
+  'animation',
+  'korean_drama',
+  'drama',
+  'horror',
+  'comedy',
+  'tv_show',
+  'action',
+  'scifi',
+  'thriller',
+  'romance',
+  'general',
+] as const;
+export type ContentGenre = (typeof CONTENT_GENRES)[number];
+
 export type NotificationType =
   | 'movie_published'
   | 'series_published'
@@ -20,6 +45,24 @@ export interface AuthUser {
   role: UserRole;
   displayName: string;
   avatarUrl: string | null;
+}
+
+export const PROFILE_AVATAR_KEYS = [
+  'aurora',
+  'ember',
+  'grape',
+  'ocean',
+  'sunset',
+  'mono',
+] as const;
+
+export type ProfileAvatarKey = (typeof PROFILE_AVATAR_KEYS)[number];
+
+export interface Profile {
+  id: string;
+  displayName: string;
+  avatarKey: ProfileAvatarKey | null;
+  isPrimary: boolean;
 }
 
 export interface AuthResponse {
@@ -45,6 +88,8 @@ export interface MovieSummary {
   durationSeconds: number;
   maturityRating: string;
   status: ContentStatus;
+  highlight: ContentHighlight;
+  genre: ContentGenre;
   viewCount: number;
   createdAt: string;
 }
@@ -63,6 +108,8 @@ export interface SeriesSummary {
   posterUrl: string | null;
   backdropUrl: string | null;
   status: ContentStatus;
+  highlight: ContentHighlight;
+  genre: ContentGenre;
   viewCount: number;
   createdAt: string;
   seasonsCount: number;

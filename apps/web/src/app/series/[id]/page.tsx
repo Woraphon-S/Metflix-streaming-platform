@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -15,8 +15,8 @@ import { watchlistService } from '@/services/watchlist.service';
 import { formatDuration, formatNumber } from '@/lib/format';
 import { cn } from '@/lib/cn';
 
-export default function SeriesDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function SeriesDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const qc = useQueryClient();
   const [activeSeason, setActiveSeason] = useState<string | null>(null);
 
@@ -77,7 +77,7 @@ export default function SeriesDetailPage({ params }: { params: Promise<{ id: str
                 <div className="absolute inset-0 bg-hero-vignette" />
                 <div className="absolute inset-0 bg-background/40" />
               </div>
-              <div className="mx-auto max-w-7xl px-4 pt-32 pb-12 sm:px-6 lg:px-8">
+              <div className="mx-auto max-w-[1800px] px-4 pt-32 pb-12 sm:px-6 lg:px-8">
                 <div className="flex flex-col gap-8 md:flex-row md:items-end">
                   {seriesQ.data.posterUrl && (
                     <div className="relative hidden h-[360px] w-[240px] flex-shrink-0 overflow-hidden rounded-2xl shadow-card ring-1 ring-white/10 md:block">
@@ -92,14 +92,14 @@ export default function SeriesDetailPage({ params }: { params: Promise<{ id: str
                   )}
                   <div className="max-w-2xl space-y-4">
                     <div className="flex flex-wrap gap-2">
-                      <Badge tone="emerald">Series</Badge>
+                      <Badge tone="emerald">ซีรีส์</Badge>
                       <Badge tone="neutral">
                         <Tv className="h-3 w-3" />
-                        {seasons.length} {seasons.length === 1 ? 'season' : 'seasons'}
+                        {seasons.length} ซีซัน
                       </Badge>
                       <Badge tone="primary">
                         <Star className="h-3 w-3" />
-                        {formatNumber(seriesQ.data.viewCount)} views
+                        {formatNumber(seriesQ.data.viewCount)} ยอดเข้าชม
                       </Badge>
                     </div>
                     <h1 className="font-display text-3xl font-extrabold sm:text-4xl md:text-5xl text-balance">
@@ -113,7 +113,7 @@ export default function SeriesDetailPage({ params }: { params: Promise<{ id: str
                     </div>
                     <p className="text-text-muted text-balance">
                       {seriesQ.data.description ||
-                        'A multi-season journey waiting in the METFLIX catalog.'}
+                        'การเดินทางหลายซีซันที่รอคุณอยู่ในคลัง METFLIX'}
                     </p>
                     <div className="flex flex-wrap items-center gap-3 pt-2">
                       {firstEpisode && (
@@ -123,7 +123,7 @@ export default function SeriesDetailPage({ params }: { params: Promise<{ id: str
                             size="lg"
                             leading={<Play className="h-4 w-4 fill-background" />}
                           >
-                            Play S{currentSeason?.seasonNumber} E{firstEpisode.episodeNumber}
+                            เล่นเลย ซีซัน {currentSeason?.seasonNumber} ตอน {firstEpisode.episodeNumber}
                           </Button>
                         </Link>
                       )}
@@ -140,7 +140,7 @@ export default function SeriesDetailPage({ params }: { params: Promise<{ id: str
                         onClick={() => toggleList.mutate()}
                         loading={toggleList.isPending}
                       >
-                        {statusQ.data?.inWatchlist ? 'In My List' : 'Add to My List'}
+                        {statusQ.data?.inWatchlist ? 'อยู่ในรายการแล้ว' : 'เพิ่มในรายการของฉัน'}
                       </Button>
                     </div>
                   </div>
@@ -148,9 +148,9 @@ export default function SeriesDetailPage({ params }: { params: Promise<{ id: str
               </div>
             </section>
 
-            <section className="mx-auto max-w-7xl space-y-6 px-4 pb-16 sm:px-6 lg:px-8">
+            <section className="mx-auto max-w-[1800px] space-y-6 px-4 pb-16 sm:px-6 lg:px-8">
               <div className="flex flex-wrap items-center gap-3">
-                <h2 className="font-display text-xl font-semibold">Episodes</h2>
+                <h2 className="font-display text-xl font-semibold">ตอน</h2>
                 {seasons.length > 1 && (
                   <div className="flex flex-wrap gap-1.5">
                     {seasons.map((season) => {
@@ -166,7 +166,7 @@ export default function SeriesDetailPage({ params }: { params: Promise<{ id: str
                               : 'bg-surface/60 text-text-muted hover:bg-surface',
                           )}
                         >
-                          Season {season.seasonNumber}
+                          ซีซัน {season.seasonNumber}
                         </button>
                       );
                     })}
@@ -221,13 +221,13 @@ export default function SeriesDetailPage({ params }: { params: Promise<{ id: str
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-text-muted">No episodes available in this season yet.</p>
+                <p className="text-sm text-text-muted">ยังไม่มีตอนในซีซันนี้</p>
               )}
             </section>
           </>
         ) : (
           <div className="mx-auto max-w-3xl px-4 pt-32 sm:px-6 lg:px-8">
-            <h1 className="font-display text-2xl">Series not found</h1>
+            <h1 className="font-display text-2xl">ไม่พบเนื้อหา</h1>
           </div>
         )}
       </AppShell>

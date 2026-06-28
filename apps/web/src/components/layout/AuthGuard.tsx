@@ -8,12 +8,22 @@ import { Spinner } from '@/components/ui/Spinner';
 interface AuthGuardProps {
   children: React.ReactNode;
   requireRole?: 'admin' | 'user';
+  /** When true (default) a viewer profile must be selected; redirects to /profiles otherwise. */
+  requireProfile?: boolean;
 }
 
-export function AuthGuard({ children, requireRole }: AuthGuardProps) {
+export function AuthGuard({
+  children,
+  requireRole,
+  requireProfile = true,
+}: AuthGuardProps) {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
+  const activeProfile = useAuthStore((s) => s.activeProfile);
   const hydrated = useAuthStore((s) => s.hydrated);
+
+  // Admins go straight to the console — they don't pick a viewer profile.
+  const needsProfile = requireProfile && requireRole !== 'admin';
 
   useEffect(() => {
     if (!hydrated) return;
@@ -23,10 +33,20 @@ export function AuthGuard({ children, requireRole }: AuthGuardProps) {
     }
     if (requireRole === 'admin' && user.role !== 'admin') {
       router.replace('/browse');
+      return;
     }
-  }, [user, hydrated, requireRole, router]);
+    if (needsProfile && !activeProfile) {
+      router.replace('/profiles');
+    }
+  }, [user, activeProfile, hydrated, requireRole, needsProfile, router]);
 
-  if (!hydrated || !user || (requireRole === 'admin' && user.role !== 'admin')) {
+  const blocked =
+    !hydrated ||
+    !user ||
+    (requireRole === 'admin' && user.role !== 'admin') ||
+    (needsProfile && !activeProfile);
+
+  if (blocked) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <Spinner />

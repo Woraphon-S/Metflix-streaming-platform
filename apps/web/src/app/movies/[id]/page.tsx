@@ -1,6 +1,5 @@
 'use client';
 
-import { use } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -14,8 +13,8 @@ import { moviesService } from '@/services/movies.service';
 import { watchlistService } from '@/services/watchlist.service';
 import { formatDuration, formatNumber } from '@/lib/format';
 
-export default function MovieDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function MovieDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const qc = useQueryClient();
 
   const movieQ = useQuery({
@@ -66,7 +65,7 @@ export default function MovieDetailPage({ params }: { params: Promise<{ id: stri
                 <div className="absolute inset-0 bg-hero-vignette" />
                 <div className="absolute inset-0 bg-background/40" />
               </div>
-              <div className="mx-auto max-w-7xl px-4 pt-32 pb-12 sm:px-6 lg:px-8">
+              <div className="mx-auto max-w-[1800px] px-4 pt-32 pb-12 sm:px-6 lg:px-8">
                 <div className="flex flex-col gap-8 md:flex-row md:items-end">
                   {movieQ.data.posterUrl && (
                     <div className="relative hidden h-[360px] w-[240px] flex-shrink-0 overflow-hidden rounded-2xl shadow-card ring-1 ring-white/10 md:block">
@@ -81,11 +80,10 @@ export default function MovieDetailPage({ params }: { params: Promise<{ id: stri
                   )}
                   <div className="max-w-2xl space-y-4">
                     <div className="flex flex-wrap gap-2">
-                      <Badge tone="primary">Movie</Badge>
-                      <Badge tone="neutral">{movieQ.data.maturityRating}</Badge>
+                      <Badge tone="primary">ภาพยนตร์</Badge>
                       <Badge tone="emerald">
                         <Star className="h-3 w-3" />
-                        {formatNumber(movieQ.data.viewCount)} views
+                        {formatNumber(movieQ.data.viewCount)} ยอดเข้าชม
                       </Badge>
                     </div>
                     <h1 className="font-display text-3xl font-extrabold sm:text-4xl md:text-5xl text-balance">
@@ -103,7 +101,7 @@ export default function MovieDetailPage({ params }: { params: Promise<{ id: stri
                     </div>
                     <p className="text-text-muted text-balance">
                       {movieQ.data.description ||
-                        'A captivating addition to the METFLIX catalog. Hit play to start watching.'}
+                        'ผลงานน่าติดตามที่เพิ่มเข้ามาในคลัง METFLIX กดเล่นเพื่อเริ่มรับชมได้เลย'}
                     </p>
                     <div className="flex flex-wrap items-center gap-3 pt-2">
                       <Link href={`/watch/movie:${movieQ.data.id}`}>
@@ -112,7 +110,7 @@ export default function MovieDetailPage({ params }: { params: Promise<{ id: stri
                           size="lg"
                           leading={<Play className="h-4 w-4 fill-background" />}
                         >
-                          Play movie
+                          เล่นเลย
                         </Button>
                       </Link>
                       <Button
@@ -128,7 +126,7 @@ export default function MovieDetailPage({ params }: { params: Promise<{ id: stri
                         onClick={() => toggleList.mutate()}
                         loading={toggleList.isPending}
                       >
-                        {statusQ.data?.inWatchlist ? 'In My List' : 'Add to My List'}
+                        {statusQ.data?.inWatchlist ? 'อยู่ในรายการแล้ว' : 'เพิ่มในรายการของฉัน'}
                       </Button>
                     </div>
                   </div>
@@ -137,7 +135,7 @@ export default function MovieDetailPage({ params }: { params: Promise<{ id: stri
             </section>
             {movieQ.data.trailerUrl && (
               <section className="mx-auto max-w-5xl space-y-3 px-4 pb-16 sm:px-6 lg:px-8">
-                <h2 className="font-display text-xl font-semibold">Trailer</h2>
+                <h2 className="font-display text-xl font-semibold">ตัวอย่าง</h2>
                 <video
                   src={movieQ.data.trailerUrl}
                   controls
@@ -148,7 +146,7 @@ export default function MovieDetailPage({ params }: { params: Promise<{ id: stri
           </>
         ) : (
           <div className="mx-auto max-w-3xl px-4 pt-32 sm:px-6 lg:px-8">
-            <h1 className="font-display text-2xl">Movie not found</h1>
+            <h1 className="font-display text-2xl">ไม่พบเนื้อหา</h1>
           </div>
         )}
       </AppShell>

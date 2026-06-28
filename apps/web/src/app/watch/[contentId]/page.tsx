@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, FastForward, Info } from 'lucide-react';
@@ -27,8 +27,8 @@ const parseContentId = (raw: string): Parsed | null => {
   return null;
 };
 
-export default function WatchPage({ params }: { params: Promise<{ contentId: string }> }) {
-  const { contentId } = use(params);
+export default function WatchPage({ params }: { params: { contentId: string } }) {
+  const { contentId } = params;
   const parsed = parseContentId(contentId);
   const [initialSeconds, setInitialSeconds] = useState<number | undefined>();
 
@@ -68,13 +68,13 @@ export default function WatchPage({ params }: { params: Promise<{ contentId: str
       <AuthGuard>
         <AppShell>
           <div className="mx-auto max-w-3xl px-4 pt-32 sm:px-6 lg:px-8">
-            <h1 className="font-display text-2xl">Invalid content URL</h1>
+            <h1 className="font-display text-2xl">URL เนื้อหาไม่ถูกต้อง</h1>
             <p className="mt-2 text-text-muted">
-              Expected format: /watch/movie:&lt;id&gt; or /watch/episode:&lt;id&gt;
+              รูปแบบที่ต้องการ: /watch/movie:&lt;id&gt; หรือ /watch/episode:&lt;id&gt;
             </p>
             <div className="mt-6">
               <Link href="/browse">
-                <Button leading={<ArrowLeft className="h-4 w-4" />}>Back to browse</Button>
+                <Button leading={<ArrowLeft className="h-4 w-4" />}>ย้อนกลับไปหน้าเรียกดู</Button>
               </Link>
             </div>
           </div>
@@ -123,7 +123,7 @@ export default function WatchPage({ params }: { params: Promise<{ contentId: str
               }
               className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text"
             >
-              <ArrowLeft className="h-4 w-4" /> Back to details
+              <ArrowLeft className="h-4 w-4" /> ย้อนกลับไปหน้ารายละเอียด
             </Link>
             {!isMovie && nextEpisodeQ.data && (
               <Link href={`/watch/episode:${nextEpisodeQ.data.id}`}>
@@ -132,7 +132,7 @@ export default function WatchPage({ params }: { params: Promise<{ contentId: str
                   size="sm"
                   trailing={<FastForward className="h-4 w-4" />}
                 >
-                  Next episode
+                  ตอนต่อไป
                 </Button>
               </Link>
             )}
@@ -153,7 +153,7 @@ export default function WatchPage({ params }: { params: Promise<{ contentId: str
               <div className="text-center">
                 <Info className="mx-auto h-8 w-8 text-warning" />
                 <p className="mt-2 text-text-muted">
-                  This title has no video source attached.
+                  เนื้อหานี้ยังไม่มีไฟล์วิดีโอแนบมาด้วย
                 </p>
               </div>
             </div>
@@ -164,11 +164,11 @@ export default function WatchPage({ params }: { params: Promise<{ contentId: str
               <Badge tone="emerald">{seriesTitle}</Badge>
             )}
             <h1 className="font-display text-2xl font-bold text-balance">
-              {title || 'Untitled'}
+              {title || 'ไม่มีชื่อเรื่อง'}
             </h1>
             {!isMovie && episodeQ.data && (
               <p className="text-sm text-text-muted">
-                Episode {episodeQ.data.episodeNumber} · {formatDuration(episodeQ.data.durationSeconds)}
+                ตอน {episodeQ.data.episodeNumber} · {formatDuration(episodeQ.data.durationSeconds)}
               </p>
             )}
             {description && (

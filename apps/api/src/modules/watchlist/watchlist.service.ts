@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../../database/database.service';
+import { ProfilesService } from '../profiles/profiles.service';
 import type {
   MovieRow,
   SeriesWithCountsRow,
@@ -15,7 +16,7 @@ const MOVIE_COLUMNS = `
   video_url AS "videoUrl",
   duration_seconds AS "durationSeconds",
   maturity_rating AS "maturityRating",
-  status, view_count AS "viewCount",
+  status, highlight, genre, view_count AS "viewCount",
   created_at AS "createdAt",
   updated_at AS "updatedAt"
 `;
@@ -25,7 +26,7 @@ const SERIES_COLUMNS = `
   poster_url AS "posterUrl",
   backdrop_url AS "backdropUrl",
   trailer_url AS "trailerUrl",
-  status, view_count AS "viewCount",
+  status, highlight, genre, view_count AS "viewCount",
   created_at AS "createdAt",
   updated_at AS "updatedAt"
 `;
@@ -41,9 +42,14 @@ export interface WatchlistListItem {
 
 @Injectable()
 export class WatchlistService {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly profiles: ProfilesService,
+  ) {}
 
-  async list(userId: string): Promise<WatchlistListItem[]> {
+  async list(userId: string, profileId: string): Promise<WatchlistListItem[]> {
+    await this.profiles.assertOwnership(userId, profileId);
+
     const items = await this.db.query<WatchlistRow>(
       `SELECT id,
               user_id AS "userId",
@@ -51,9 +57,9 @@ export class WatchlistService {
               content_id AS "contentId",
               created_at AS "createdAt"
        FROM watchlists
-       WHERE user_id = $1
+       WHERE profile_id = $1
        ORDER BY created_at DESC`,
-      [userId],
+      [profileId],
     );
 
     const movieIds = items.filter((i) => i.contentType === 'movie').map((i) => i.contentId);
@@ -92,26 +98,28 @@ export class WatchlistService {
 
   async add(
     userId: string,
+    profileId: string,
     contentType: WatchlistContentType,
     contentId: string,
   ): Promise<WatchlistRow> {
+    await this.profiles.assertOwnership(userId, profileId);
     await this.assertContentExists(contentType, contentId);
 
     const existing = await this.db.queryOne<WatchlistRow>(
       `SELECT id, user_id AS "userId", content_type AS "contentType",
               content_id AS "contentId", created_at AS "createdAt"
        FROM watchlists
-       WHERE user_id = $1 AND content_type = $2 AND content_id = $3`,
-      [userId, contentType, contentId],
+       WHERE profile_id = $1 AND content_type = $2 AND content_id = $3`,
+      [profileId, contentType, contentId],
     );
     if (existing) return existing;
 
     const inserted = await this.db.queryOne<WatchlistRow>(
-      `INSERT INTO watchlists (user_id, content_type, content_id)
-       VALUES ($1, $2, $3)
+      `INSERT INTO watchlists (user_id, profile_id, content_type, content_id)
+       VALUES ($1, $2, $3, $4)
        RETURNING id, user_id AS "userId", content_type AS "contentType",
                  content_id AS "contentId", created_at AS "createdAt"`,
-      [userId, contentType, contentId],
+      [userId, profileId, contentType, contentId],
     );
     if (!inserted) throw new Error('Failed to add to watchlist');
     return inserted;
@@ -119,24 +127,28 @@ export class WatchlistService {
 
   async remove(
     userId: string,
+    profileId: string,
     contentType: WatchlistContentType,
     contentId: string,
   ): Promise<{ ok: true }> {
+    await this.profiles.assertOwnership(userId, profileId);
     await this.db.execute(
-      'DELETE FROM watchlists WHERE user_id = $1 AND content_type = $2 AND content_id = $3',
-      [userId, contentType, contentId],
+      'DELETE FROM watchlists WHERE profile_id = $1 AND content_type = $2 AND content_id = $3',
+      [profileId, contentType, contentId],
     );
     return { ok: true };
   }
 
   async exists(
     userId: string,
+    profileId: string,
     contentType: WatchlistContentType,
     contentId: string,
   ): Promise<{ inWatchlist: boolean }> {
+    await this.profiles.assertOwnership(userId, profileId);
     const row = await this.db.queryOne<{ id: string }>(
-      'SELECT id FROM watchlists WHERE user_id = $1 AND content_type = $2 AND content_id = $3',
-      [userId, contentType, contentId],
+      'SELECT id FROM watchlists WHERE profile_id = $1 AND content_type = $2 AND content_id = $3',
+      [profileId, contentType, contentId],
     );
     return { inWatchlist: !!row };
   }

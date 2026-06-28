@@ -16,6 +16,11 @@ const SAMPLE_VIDEO =
 const SAMPLE_TRAILER =
   'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4';
 
+const pic = (seed: string) => ({
+  posterUrl: `https://picsum.photos/seed/${seed}/600/900`,
+  backdropUrl: `https://picsum.photos/seed/${seed}b/1600/900`,
+});
+
 const moviesSeed = [
   {
     title: 'Neon Skyline',
@@ -27,6 +32,8 @@ const moviesSeed = [
       'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1600&q=80',
     durationSeconds: 7320,
     maturityRating: 'TV-MA',
+    genre: 'scifi',
+    highlight: 'new',
   },
   {
     title: 'Emerald Tide',
@@ -38,6 +45,8 @@ const moviesSeed = [
       'https://images.unsplash.com/photo-1502209524164-acea936639a2?auto=format&fit=crop&w=1600&q=80',
     durationSeconds: 6300,
     maturityRating: 'PG-13',
+    genre: 'drama',
+    highlight: 'none',
   },
   {
     title: 'Velvet Static',
@@ -49,6 +58,8 @@ const moviesSeed = [
       'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1600&q=80',
     durationSeconds: 5940,
     maturityRating: 'TV-14',
+    genre: 'thriller',
+    highlight: 'top10',
   },
   {
     title: 'Midnight Mosaic',
@@ -60,6 +71,8 @@ const moviesSeed = [
       'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=1600&q=80',
     durationSeconds: 6900,
     maturityRating: 'PG-13',
+    genre: 'action',
+    highlight: 'none',
   },
   {
     title: 'Hollow Signal',
@@ -71,6 +84,8 @@ const moviesSeed = [
       'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1600&q=80',
     durationSeconds: 7800,
     maturityRating: 'TV-MA',
+    genre: 'scifi',
+    highlight: 'new',
   },
   {
     title: 'Glasswing',
@@ -82,7 +97,25 @@ const moviesSeed = [
       'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=1600&q=80',
     durationSeconds: 6480,
     maturityRating: 'PG-13',
+    genre: 'drama',
+    highlight: 'top10',
   },
+  { title: 'ดาบเทพอสูร', description: 'นักล่าอสูรหนุ่มออกตามหาวิธีรักษาน้องสาวที่กลายร่าง', durationSeconds: 1440, maturityRating: 'TV-14', genre: 'anime', highlight: 'new_episode', ...pic('anime1') },
+  { title: 'นินจารัตติกาล', description: 'ตำนานนินจาผู้พิทักษ์หมู่บ้านจากเงามืด', durationSeconds: 1500, maturityRating: 'TV-14', genre: 'anime', highlight: 'none', ...pic('anime2') },
+  { title: 'ผจญภัยแดนของเล่น', description: 'ของเล่นมีชีวิตออกผจญภัยช่วยเจ้าของตัวน้อย', durationSeconds: 5400, maturityRating: 'G', genre: 'animation', highlight: 'new', ...pic('anim1') },
+  { title: 'เพื่อนซี้สี่ขา', description: 'มิตรภาพอบอุ่นของเด็กชายกับสุนัขจอมซน', durationSeconds: 5700, maturityRating: 'G', genre: 'animation', highlight: 'none', ...pic('anim2') },
+  { title: 'รักนี้ที่กรุงโซล', description: 'เรื่องราวความรักของสองหัวใจกลางมหานครโซล', durationSeconds: 6600, maturityRating: 'PG-13', genre: 'korean_drama', highlight: 'top10', ...pic('kdrama1') },
+  { title: 'สัญญารักห้าฤดู', description: 'คำสัญญาที่รอคอยข้ามกาลเวลาห้าฤดูกาล', durationSeconds: 6300, maturityRating: 'PG-13', genre: 'korean_drama', highlight: 'none', ...pic('kdrama2') },
+  { title: 'บ้านเช่าเฮี้ยน', description: 'ครอบครัวหนึ่งย้ายเข้าบ้านเช่าราคาถูกผิดปกติ', durationSeconds: 6000, maturityRating: 'TV-MA', genre: 'horror', highlight: 'new', ...pic('horror1') },
+  { title: 'เสียงเรียกตอนตีสาม', description: 'เสียงปริศนาที่ดังขึ้นทุกคืนเวลาตีสาม', durationSeconds: 5820, maturityRating: 'TV-MA', genre: 'horror', highlight: 'none', ...pic('horror2') },
+  { title: 'แก๊งป่วนชวนหัว', description: 'สี่เกลอกับภารกิจป่วนสุดฮาประจำมหาวิทยาลัย', durationSeconds: 5760, maturityRating: 'PG-13', genre: 'comedy', highlight: 'none', ...pic('comedy1') },
+  { title: 'ครอบครัวสุดเพี้ยน', description: 'ครอบครัวจอมป่วนกับเรื่องวุ่นๆ ในทุกวัน', durationSeconds: 5940, maturityRating: 'PG', genre: 'comedy', highlight: 'new', ...pic('comedy2') },
+  { title: 'ล่าล้างแค้น', description: 'อดีตสายลับกลับมาทวงความยุติธรรมด้วยตัวเอง', durationSeconds: 7080, maturityRating: 'TV-MA', genre: 'action', highlight: 'top10', ...pic('action1') },
+  { title: 'ภารกิจรหัสเดือด', description: 'หน่วยรบพิเศษกับภารกิจกู้ระเบิดข้ามชาติ', durationSeconds: 6960, maturityRating: 'TV-14', genre: 'action', highlight: 'none', ...pic('action2') },
+  { title: 'รักแรกที่ปลายฝน', description: 'ความรักครั้งแรกที่เริ่มต้นในวันฝนพรำ', durationSeconds: 6120, maturityRating: 'PG-13', genre: 'romance', highlight: 'new', ...pic('romance1') },
+  { title: 'จดหมายถึงเธอ', description: 'จดหมายเก่าที่นำพาสองหัวใจให้พบกันอีกครั้ง', durationSeconds: 6240, maturityRating: 'PG', genre: 'romance', highlight: 'none', ...pic('romance2') },
+  { title: 'เกมล่าเงา', description: 'นักสืบไล่ล่าฆาตกรที่ทิ้งปริศนาไว้ทุกฉาก', durationSeconds: 6780, maturityRating: 'TV-MA', genre: 'thriller', highlight: 'none', ...pic('thriller1') },
+  { title: 'ดาวเคราะห์ที่หายไป', description: 'ทีมสำรวจอวกาศตามหาดาวเคราะห์ที่หายไปอย่างลึกลับ', durationSeconds: 7200, maturityRating: 'TV-14', genre: 'scifi', highlight: 'new', ...pic('scifi1') },
 ];
 
 const seriesSeed = [
@@ -94,6 +127,8 @@ const seriesSeed = [
       'https://images.unsplash.com/photo-1483086431886-3590a88317fe?auto=format&fit=crop&w=600&q=80',
     backdropUrl:
       'https://images.unsplash.com/photo-1483086431886-3590a88317fe?auto=format&fit=crop&w=1600&q=80',
+    genre: 'tv_show',
+    highlight: 'new_season',
     seasons: [
       {
         seasonNumber: 1,
@@ -118,10 +153,10 @@ const seriesSeed = [
     title: 'Last Light District',
     description:
       'A neon-noir detective drama set in a city where the sun has not risen in seven years.',
-    posterUrl:
-      'https://images.unsplash.com/photo-1518544866330-95a2bd1d8e25?auto=format&fit=crop&w=600&q=80',
-    backdropUrl:
-      'https://images.unsplash.com/photo-1518544866330-95a2bd1d8e25?auto=format&fit=crop&w=1600&q=80',
+    posterUrl: 'https://picsum.photos/seed/lastlight/600/900',
+    backdropUrl: 'https://picsum.photos/seed/lastlightb/1600/900',
+    genre: 'tv_show',
+    highlight: 'new_episode',
     seasons: [
       {
         seasonNumber: 1,
@@ -143,6 +178,8 @@ const seriesSeed = [
       'https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=600&q=80',
     backdropUrl:
       'https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=1600&q=80',
+    genre: 'tv_show',
+    highlight: 'none',
     seasons: [
       {
         seasonNumber: 1,
@@ -199,8 +236,8 @@ async function ensureAdmin(): Promise<void> {
       [adminEmail, passwordHash],
     );
     await pool.query(
-      'INSERT INTO profiles (user_id, display_name) VALUES ($1, $2)',
-      [result.rows[0].id, 'METFLIX Admin'],
+      'INSERT INTO profiles (user_id, display_name, avatar_key, is_primary) VALUES ($1, $2, $3, true)',
+      [result.rows[0].id, 'METFLIX Admin', 'mono'],
     );
   } else {
     await pool.query(
@@ -226,9 +263,18 @@ async function ensureDemoUser(): Promise<void> {
        RETURNING id`,
       [email, passwordHash],
     );
+    const demoId = result.rows[0].id;
     await pool.query(
-      'INSERT INTO profiles (user_id, display_name) VALUES ($1, $2)',
-      [result.rows[0].id, 'Demo Viewer'],
+      'INSERT INTO profiles (user_id, display_name, avatar_key, is_primary) VALUES ($1, $2, $3, true)',
+      [demoId, 'Demo Viewer', 'aurora'],
+    );
+    await pool.query(
+      'INSERT INTO profiles (user_id, display_name, avatar_key, is_primary) VALUES ($1, $2, $3, false)',
+      [demoId, 'Family', 'ember'],
+    );
+    await pool.query(
+      'INSERT INTO profiles (user_id, display_name, avatar_key, is_primary) VALUES ($1, $2, $3, false)',
+      [demoId, 'Kids', 'grape'],
     );
   }
 }
@@ -239,12 +285,14 @@ async function seedMovies(): Promise<void> {
     await pool.query(
       `INSERT INTO movies
          (title, slug, description, poster_url, backdrop_url, trailer_url, video_url,
-          duration_seconds, maturity_rating, status, view_count)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'published', $10)
+          duration_seconds, maturity_rating, status, highlight, genre, view_count)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'published', $10, $11, $12)
        ON CONFLICT (slug) DO UPDATE SET
          description = EXCLUDED.description,
          poster_url = EXCLUDED.poster_url,
-         backdrop_url = EXCLUDED.backdrop_url`,
+         backdrop_url = EXCLUDED.backdrop_url,
+         highlight = EXCLUDED.highlight,
+         genre = EXCLUDED.genre`,
       [
         movie.title,
         slug,
@@ -255,6 +303,8 @@ async function seedMovies(): Promise<void> {
         SAMPLE_VIDEO,
         movie.durationSeconds,
         movie.maturityRating,
+        movie.highlight,
+        movie.genre,
         Math.floor(Math.random() * 5000),
       ],
     );
@@ -266,12 +316,14 @@ async function seedSeries(): Promise<void> {
     const slug = slugify(series.title);
     const seriesResult = await pool.query<{ id: string }>(
       `INSERT INTO series
-         (title, slug, description, poster_url, backdrop_url, trailer_url, status, view_count)
-       VALUES ($1, $2, $3, $4, $5, $6, 'published', $7)
+         (title, slug, description, poster_url, backdrop_url, trailer_url, status, highlight, genre, view_count)
+       VALUES ($1, $2, $3, $4, $5, $6, 'published', $7, $8, $9)
        ON CONFLICT (slug) DO UPDATE SET
          description = EXCLUDED.description,
          poster_url = EXCLUDED.poster_url,
-         backdrop_url = EXCLUDED.backdrop_url
+         backdrop_url = EXCLUDED.backdrop_url,
+         highlight = EXCLUDED.highlight,
+         genre = EXCLUDED.genre
        RETURNING id`,
       [
         series.title,
@@ -280,6 +332,8 @@ async function seedSeries(): Promise<void> {
         series.posterUrl,
         series.backdropUrl,
         SAMPLE_TRAILER,
+        series.highlight,
+        series.genre,
         Math.floor(Math.random() * 3000),
       ],
     );

@@ -15,14 +15,14 @@ import { useAuthStore } from '@/stores/auth.store';
 import { extractErrorMessage } from '@/services/api';
 
 const userSchema = z.object({
-  email: z.string().email('Enter a valid email'),
-  password: z.string().min(1, 'Password is required'),
+  email: z.string().email('กรอกอีเมลให้ถูกต้อง'),
+  password: z.string().min(1, 'กรุณากรอกรหัสผ่าน'),
 });
 type UserForm = z.infer<typeof userSchema>;
 
 const adminSchema = z.object({
-  id: z.string().min(1, 'Admin id is required'),
-  password: z.string().min(1, 'Password is required'),
+  id: z.string().min(1, 'กรุณากรอกรหัสผู้ดูแล'),
+  password: z.string().min(1, 'กรุณากรอกรหัสผ่าน'),
 });
 type AdminForm = z.infer<typeof adminSchema>;
 
@@ -48,7 +48,7 @@ export default function LoginPage() {
     try {
       const res = await authService.login(values);
       setSession(res.accessToken, res.user);
-      router.replace('/browse');
+      router.replace('/profiles');
     } catch (error) {
       setServerError(extractErrorMessage(error, 'Login failed'));
     }
@@ -70,14 +70,14 @@ export default function LoginPage() {
       <div className="glass-strong rounded-3xl p-7 shadow-card">
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="font-display text-2xl font-bold">Welcome back</h1>
+            <h1 className="font-display text-2xl font-bold">ยินดีต้อนรับกลับ</h1>
             <p className="text-sm text-text-muted">
               {mode === 'user'
-                ? 'Sign in to continue streaming'
-                : 'Developer admin access'}
+                ? 'เข้าสู่ระบบเพื่อรับชมต่อ'
+                : 'เข้าสำหรับผู้ดูแลระบบ (เดโม)'}
             </p>
           </div>
-          {mode === 'admin' && <Badge tone="emerald">Demo only</Badge>}
+          {mode === 'admin' && <Badge tone="emerald">เดโมเท่านั้น</Badge>}
         </div>
 
         <div className="mb-6 inline-flex rounded-full border border-white/10 bg-surface/50 p-1 text-sm">
@@ -87,7 +87,7 @@ export default function LoginPage() {
               mode === 'user' ? 'bg-primary text-white shadow-glow' : 'text-text-muted'
             }`}
           >
-            User
+            ผู้ใช้
           </button>
           <button
             onClick={() => setMode('admin')}
@@ -96,14 +96,14 @@ export default function LoginPage() {
             }`}
           >
             <ShieldCheck className="h-4 w-4" />
-            Admin
+            ผู้ดูแล
           </button>
         </div>
 
         {mode === 'user' ? (
           <form onSubmit={userForm.handleSubmit(submitUser)} className="space-y-4">
             <Input
-              label="Email"
+              label="อีเมล"
               type="email"
               leading={<AtSign className="h-4 w-4" />}
               placeholder="you@metflix.app"
@@ -111,7 +111,7 @@ export default function LoginPage() {
               {...userForm.register('email')}
             />
             <Input
-              label="Password"
+              label="รหัสผ่าน"
               type="password"
               leading={<Lock className="h-4 w-4" />}
               placeholder="••••••••"
@@ -124,28 +124,28 @@ export default function LoginPage() {
               </p>
             )}
             <Button type="submit" className="w-full" loading={userForm.formState.isSubmitting}>
-              Sign in
+              เข้าสู่ระบบ
             </Button>
             <p className="text-center text-sm text-text-muted">
-              New here?{' '}
+              เพิ่งเคยมาที่นี่?{' '}
               <Link href="/register" className="text-primary-400 hover:underline">
-                Create an account
+                สร้างบัญชี
               </Link>
             </p>
             <div className="rounded-xl border border-white/10 bg-surface/40 p-3 text-xs text-text-subtle">
-              Demo user: <span className="text-text">demo@metflix.local</span> / <span className="text-text">demo1234</span>
+              บัญชีเดโม: <span className="text-text">demo@metflix.local</span> / <span className="text-text">demo1234</span>
             </div>
           </form>
         ) : (
           <form onSubmit={adminForm.handleSubmit(submitAdmin)} className="space-y-4">
             <Input
-              label="Admin ID"
+              label="รหัสผู้ดูแล"
               leading={<KeyRound className="h-4 w-4" />}
               error={adminForm.formState.errors.id?.message}
               {...adminForm.register('id')}
             />
             <Input
-              label="Password"
+              label="รหัสผ่าน"
               type="password"
               leading={<Lock className="h-4 w-4" />}
               error={adminForm.formState.errors.password?.message}
@@ -162,11 +162,11 @@ export default function LoginPage() {
               className="w-full"
               loading={adminForm.formState.isSubmitting}
             >
-              Enter admin console
+              เข้าสู่คอนโซลผู้ดูแล
             </Button>
             <div className="rounded-xl border border-emerald/30 bg-emerald/5 p-3 text-xs text-emerald">
-              Fixed dev account: <span className="font-semibold">id: admin</span>{' '}
-              <span className="font-semibold">password: 1234</span>. Demo only — do not deploy as-is.
+              บัญชีผู้ดูแล (เดโม): <span className="font-semibold">id: admin</span>{' '}
+              <span className="font-semibold">password: 1234</span>. เดโมเท่านั้น — อย่านำไปใช้งานจริงตามที่เป็นอยู่
             </div>
           </form>
         )}

@@ -14,9 +14,9 @@ import { useAuthStore } from '@/stores/auth.store';
 import { extractErrorMessage } from '@/services/api';
 
 const schema = z.object({
-  displayName: z.string().min(2, 'At least 2 characters').max(40),
-  email: z.string().email('Enter a valid email'),
-  password: z.string().min(6, 'At least 6 characters').max(64),
+  displayName: z.string().min(2, 'อย่างน้อย 2 ตัวอักษร').max(40),
+  email: z.string().email('กรอกอีเมลให้ถูกต้อง'),
+  password: z.string().min(6, 'อย่างน้อย 6 ตัวอักษร').max(64),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -36,7 +36,7 @@ export default function RegisterPage() {
     try {
       const res = await authService.register(values);
       setSession(res.accessToken, res.user);
-      router.replace('/browse');
+      router.replace('/profiles');
     } catch (error) {
       setServerError(extractErrorMessage(error, 'Registration failed'));
     }
@@ -45,20 +45,20 @@ export default function RegisterPage() {
   return (
     <div className="w-full max-w-md">
       <div className="glass-strong rounded-3xl p-7 shadow-card">
-        <h1 className="font-display text-2xl font-bold">Create your account</h1>
+        <h1 className="font-display text-2xl font-bold">สร้างบัญชี</h1>
         <p className="mt-1 text-sm text-text-muted">
-          Join METFLIX and build your watchlist
+          เข้าร่วม METFLIX และสร้างรายการดูของคุณ
         </p>
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 space-y-4">
           <Input
-            label="Display name"
+            label="ชื่อที่แสดง"
             leading={<UserCircle2 className="h-4 w-4" />}
-            placeholder="Your name"
+            placeholder="ชื่อของคุณ"
             error={form.formState.errors.displayName?.message}
             {...form.register('displayName')}
           />
           <Input
-            label="Email"
+            label="อีเมล"
             type="email"
             leading={<AtSign className="h-4 w-4" />}
             placeholder="you@metflix.app"
@@ -66,10 +66,10 @@ export default function RegisterPage() {
             {...form.register('email')}
           />
           <Input
-            label="Password"
+            label="รหัสผ่าน"
             type="password"
             leading={<Lock className="h-4 w-4" />}
-            placeholder="At least 6 characters"
+            placeholder="อย่างน้อย 6 ตัวอักษร"
             error={form.formState.errors.password?.message}
             {...form.register('password')}
           />
@@ -79,12 +79,12 @@ export default function RegisterPage() {
             </p>
           )}
           <Button type="submit" className="w-full" loading={form.formState.isSubmitting}>
-            Create account
+            สร้างบัญชี
           </Button>
           <p className="text-center text-sm text-text-muted">
-            Already have an account?{' '}
+            มีบัญชีอยู่แล้ว?{' '}
             <Link href="/login" className="text-primary-400 hover:underline">
-              Sign in
+              เข้าสู่ระบบ
             </Link>
           </p>
         </form>

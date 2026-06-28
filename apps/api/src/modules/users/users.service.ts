@@ -33,7 +33,7 @@ export class UsersService {
               p.display_name AS "displayName",
               p.avatar_url AS "avatarUrl"
        FROM users u
-       LEFT JOIN profiles p ON p.user_id = u.id
+       LEFT JOIN profiles p ON p.user_id = u.id AND p.is_primary = true
        WHERE u.id = $1`,
       [userId],
     );
@@ -68,14 +68,14 @@ export class UsersService {
 
   async updateProfile(userId: string, dto: UpdateProfileDto): Promise<ProfileResult> {
     const existing = await this.db.queryOne<{ id: string }>(
-      'SELECT id FROM profiles WHERE user_id = $1',
+      'SELECT id FROM profiles WHERE user_id = $1 AND is_primary = true',
       [userId],
     );
 
     if (!existing) {
       await this.db.execute(
-        `INSERT INTO profiles (user_id, display_name, avatar_url)
-         VALUES ($1, $2, $3)`,
+        `INSERT INTO profiles (user_id, display_name, avatar_url, is_primary)
+         VALUES ($1, $2, $3, true)`,
         [userId, dto.displayName ?? 'New User', dto.avatarUrl ?? null],
       );
     } else {
@@ -83,7 +83,7 @@ export class UsersService {
         `UPDATE profiles
          SET display_name = COALESCE($2, display_name),
              avatar_url = COALESCE($3, avatar_url)
-         WHERE user_id = $1`,
+         WHERE user_id = $1 AND is_primary = true`,
         [userId, dto.displayName ?? null, dto.avatarUrl ?? null],
       );
     }

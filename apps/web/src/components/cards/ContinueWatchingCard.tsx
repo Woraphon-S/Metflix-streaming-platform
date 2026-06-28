@@ -9,10 +9,10 @@ import type { WatchHistoryItem } from '@metflix/shared-types';
 export function ContinueWatchingCard({ item }: { item: WatchHistoryItem }) {
   const isMovie = item.contentType === 'movie';
   const target = isMovie
-    ? { href: `/watch/movie:${item.contentId}`, title: item.movie?.title ?? 'Movie' }
-    : { href: `/watch/episode:${item.contentId}`, title: `${item.episode?.title ?? 'Episode'}` };
+    ? { href: `/watch/movie:${item.contentId}`, title: item.movie?.title ?? 'ภาพยนตร์' }
+    : { href: `/watch/episode:${item.contentId}`, title: `${item.episode?.title ?? 'ตอน'}` };
   const subtitle = isMovie
-    ? item.movie?.maturityRating ?? ''
+    ? ''
     : (item.episode as (NonNullable<typeof item.episode> & { seriesTitle?: string }) | null)
         ?.seriesTitle ?? '';
   const cover = isMovie ? item.movie?.backdropUrl ?? item.movie?.posterUrl : item.episode?.posterUrl;
@@ -39,7 +39,7 @@ export function ContinueWatchingCard({ item }: { item: WatchHistoryItem }) {
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
       <div className="absolute inset-x-3 bottom-3 space-y-2">
         <div className="text-xs uppercase tracking-wide text-emerald">
-          {subtitle || (isMovie ? 'Movie' : 'Series')}
+          {subtitle || (isMovie ? 'ภาพยนตร์' : 'ซีรีส์')}
         </div>
         <div className="font-display text-sm font-semibold leading-tight line-clamp-2">
           {target.title}

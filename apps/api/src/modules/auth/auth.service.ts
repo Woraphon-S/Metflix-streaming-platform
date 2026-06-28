@@ -65,7 +65,7 @@ export class AuthService {
       );
       const created = inserted.rows[0];
       await client.query(
-        'INSERT INTO profiles (user_id, display_name) VALUES ($1, $2)',
+        'INSERT INTO profiles (user_id, display_name, is_primary) VALUES ($1, $2, true)',
         [created.id, dto.displayName],
       );
       return created;
@@ -116,7 +116,7 @@ export class AuthService {
         );
         const newUser = userResult.rows[0];
         await client.query(
-          'INSERT INTO profiles (user_id, display_name) VALUES ($1, $2)',
+          'INSERT INTO profiles (user_id, display_name, is_primary) VALUES ($1, $2, true)',
           [newUser.id, 'METFLIX Admin'],
         );
         return newUser;
@@ -158,7 +158,7 @@ export class AuthService {
               p.display_name AS "displayName",
               p.avatar_url AS "avatarUrl"
        FROM users u
-       LEFT JOIN profiles p ON p.user_id = u.id
+       LEFT JOIN profiles p ON p.user_id = u.id AND p.is_primary = true
        WHERE u.id = $1`,
       [userId],
     );
@@ -183,7 +183,7 @@ export class AuthService {
               p.display_name AS "displayName",
               p.avatar_url AS "avatarUrl"
        FROM users u
-       LEFT JOIN profiles p ON p.user_id = u.id
+       LEFT JOIN profiles p ON p.user_id = u.id AND p.is_primary = true
        WHERE u.email = $1`,
       [email],
     );

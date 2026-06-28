@@ -29,7 +29,10 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV:-development}
       API_PORT: ${API_PORT:-4000}
-      DATABASE_URL: ${DATABASE_URL:-postgresql://metflix:metflix@postgres:5432/metflix?schema=public}
+      # Inside the compose network the DB host is the "postgres" service, not localhost.
+      # Derived from POSTGRES_* so a host-oriented DATABASE_URL in .env (localhost, for
+      # non-Docker local dev) can't override it and break the container.
+      DATABASE_URL: postgresql://${POSTGRES_USER:-metflix}:${POSTGRES_PASSWORD:-metflix}@postgres:5432/${POSTGRES_DB:-metflix}
       JWT_SECRET: ${JWT_SECRET:-change_me_to_a_long_random_string}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}

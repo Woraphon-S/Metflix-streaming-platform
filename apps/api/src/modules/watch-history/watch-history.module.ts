@@ -3,9 +3,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { WatchHistoryController } from './watch-history.controller';
 import { WatchHistoryService } from './watch-history.service';
+import { ProfilesModule } from '../profiles/profiles.module';
 
 @Module({
   imports: [
+    ProfilesModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

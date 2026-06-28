@@ -15,10 +15,10 @@ import { api, extractErrorMessage } from '@/services/api';
 import { useAuthStore } from '@/stores/auth.store';
 
 const profileSchema = z.object({
-  displayName: z.string().min(2, 'At least 2 characters').max(40),
+  displayName: z.string().min(2, 'อย่างน้อย 2 ตัวอักษร').max(40),
   avatarUrl: z
     .string()
-    .url('Must be a valid URL (https://...)')
+    .url('ต้องเป็นลิงก์ที่ถูกต้อง (https://...)')
     .or(z.literal('')),
 });
 type FormValues = z.infer<typeof profileSchema>;
@@ -112,7 +112,7 @@ export default function ProfilePage() {
             </div>
             <div className="space-y-1">
               <div className="text-xs uppercase tracking-wide text-text-muted">
-                Account
+                บัญชี
               </div>
               <h1 className="font-display text-3xl font-extrabold">
                 {profileQ.data?.displayName ?? '—'}
@@ -127,25 +127,25 @@ export default function ProfilePage() {
           </header>
 
           <section className="grid gap-4 sm:grid-cols-3">
-            <StatCard label="Titles watched" value={profileQ.data?.stats.watched ?? 0} />
-            <StatCard label="Completed" value={profileQ.data?.stats.completed ?? 0} />
-            <StatCard label="Saved to My List" value={profileQ.data?.stats.myList ?? 0} />
+            <StatCard label="เรื่องที่ดูแล้ว" value={profileQ.data?.stats.watched ?? 0} />
+            <StatCard label="ดูจบแล้ว" value={profileQ.data?.stats.completed ?? 0} />
+            <StatCard label="บันทึกในรายการ" value={profileQ.data?.stats.myList ?? 0} />
           </section>
 
           <section className="glass-strong rounded-2xl p-6 shadow-card">
-            <h2 className="font-display text-lg font-semibold">Edit profile</h2>
+            <h2 className="font-display text-lg font-semibold">แก้ไขบัญชี</h2>
             <p className="mt-1 text-sm text-text-muted">
-              Update your display name and avatar. Email is fixed.
+              แก้ไขชื่อที่แสดงและรูปโปรไฟล์ (อีเมลแก้ไขไม่ได้)
             </p>
             <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 grid gap-4 sm:grid-cols-2">
               <Input
-                label="Display name"
+                label="ชื่อที่แสดง"
                 leading={<UserCircle2 className="h-4 w-4" />}
                 error={form.formState.errors.displayName?.message}
                 {...form.register('displayName')}
               />
               <Input
-                label="Avatar URL"
+                label="ลิงก์รูปโปรไฟล์"
                 leading={<ImageIcon className="h-4 w-4" />}
                 placeholder="https://..."
                 error={form.formState.errors.avatarUrl?.message}
@@ -157,10 +157,10 @@ export default function ProfilePage() {
                   loading={updateMutation.isPending}
                   trailing={saved ? <CheckCircle2 className="h-4 w-4 text-emerald" /> : null}
                 >
-                  Save changes
+                  บันทึก
                 </Button>
                 {saved && (
-                  <span className="text-sm text-emerald">Profile updated</span>
+                  <span className="text-sm text-emerald">อัปเดตบัญชีแล้ว</span>
                 )}
                 {serverError && (
                   <span className="text-sm text-danger">{serverError}</span>

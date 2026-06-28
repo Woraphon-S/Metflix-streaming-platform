@@ -12,6 +12,7 @@ import { WATCHLIST_CONTENT_TYPES } from '../../database/types';
 import { WatchlistService } from './watchlist.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { ProfileId } from '../../common/decorators/profile-id.decorator';
 import type { JwtPayload } from '../../common/guards/jwt-auth.guard';
 
 const ALLOWED: WatchlistContentType[] = WATCHLIST_CONTENT_TYPES;
@@ -22,8 +23,8 @@ export class WatchlistController {
   constructor(private readonly watchlistService: WatchlistService) {}
 
   @Get()
-  list(@CurrentUser() user: JwtPayload) {
-    return this.watchlistService.list(user.sub);
+  list(@CurrentUser() user: JwtPayload, @ProfileId() profileId?: string) {
+    return this.watchlistService.list(user.sub, this.requireProfile(profileId));
   }
 
   @Get(':contentType/:contentId/status')
@@ -31,9 +32,15 @@ export class WatchlistController {
     @CurrentUser() user: JwtPayload,
     @Param('contentType') contentType: string,
     @Param('contentId') contentId: string,
+    @ProfileId() profileId?: string,
   ) {
     const type = this.validateType(contentType);
-    return this.watchlistService.exists(user.sub, type, contentId);
+    return this.watchlistService.exists(
+      user.sub,
+      this.requireProfile(profileId),
+      type,
+      contentId,
+    );
   }
 
   @Post(':contentType/:contentId')
@@ -41,9 +48,15 @@ export class WatchlistController {
     @CurrentUser() user: JwtPayload,
     @Param('contentType') contentType: string,
     @Param('contentId') contentId: string,
+    @ProfileId() profileId?: string,
   ) {
     const type = this.validateType(contentType);
-    return this.watchlistService.add(user.sub, type, contentId);
+    return this.watchlistService.add(
+      user.sub,
+      this.requireProfile(profileId),
+      type,
+      contentId,
+    );
   }
 
   @Delete(':contentType/:contentId')
@@ -51,9 +64,22 @@ export class WatchlistController {
     @CurrentUser() user: JwtPayload,
     @Param('contentType') contentType: string,
     @Param('contentId') contentId: string,
+    @ProfileId() profileId?: string,
   ) {
     const type = this.validateType(contentType);
-    return this.watchlistService.remove(user.sub, type, contentId);
+    return this.watchlistService.remove(
+      user.sub,
+      this.requireProfile(profileId),
+      type,
+      contentId,
+    );
+  }
+
+  private requireProfile(profileId?: string): string {
+    if (!profileId) {
+      throw new BadRequestException('No active profile selected');
+    }
+    return profileId;
   }
 
   private validateType(value: string): WatchlistContentType {

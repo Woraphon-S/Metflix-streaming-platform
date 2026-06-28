@@ -28,6 +28,25 @@ const movieSchema = z.object({
   durationSeconds: z.coerce.number().int().min(0).optional(),
   maturityRating: z.string().max(20).optional(),
   status: z.enum(['draft', 'published', 'archived']),
+  highlight: z
+    .enum(['none', 'new', 'top10', 'new_episode', 'new_season'])
+    .optional(),
+  genre: z
+    .enum([
+      'anime',
+      'animation',
+      'korean_drama',
+      'drama',
+      'horror',
+      'comedy',
+      'tv_show',
+      'action',
+      'scifi',
+      'thriller',
+      'romance',
+      'general',
+    ])
+    .optional(),
 });
 type MovieForm = z.infer<typeof movieSchema>;
 
@@ -60,6 +79,8 @@ export default function AdminMoviesPage() {
         durationSeconds: values.durationSeconds,
         maturityRating: values.maturityRating || undefined,
         status: values.status,
+        highlight: values.highlight,
+        genre: values.genre,
       };
       if (editing) {
         return moviesService.adminUpdate(editing, payload);
@@ -97,6 +118,8 @@ export default function AdminMoviesPage() {
       durationSeconds: 0,
       maturityRating: 'PG-13',
       status: 'draft',
+      highlight: 'none',
+      genre: 'general',
     });
     setOpen(true);
   };
@@ -116,6 +139,8 @@ export default function AdminMoviesPage() {
         durationSeconds: movie.durationSeconds,
         maturityRating: movie.maturityRating,
         status: movie.status,
+        highlight: movie.highlight,
+        genre: movie.genre,
       });
       setOpen(true);
     } catch (error) {
@@ -243,10 +268,31 @@ export default function AdminMoviesPage() {
             {...form.register('durationSeconds')}
           />
           <Input label="Maturity rating" placeholder="PG-13" {...form.register('maturityRating')} />
-          <Select label="Status" className="sm:col-span-2" {...form.register('status')}>
+          <Select label="Status" {...form.register('status')}>
             <option value="draft">Draft</option>
             <option value="published">Published</option>
             <option value="archived">Archived</option>
+          </Select>
+          <Select label="ป้ายไฮไลต์ (badge บนการ์ด)" {...form.register('highlight')}>
+            <option value="none">ไม่มี</option>
+            <option value="new">เพิ่มใหม่ล่าสุด</option>
+            <option value="top10">TOP 10</option>
+            <option value="new_episode">ตอนใหม่</option>
+            <option value="new_season">ซีซั่นใหม่</option>
+          </Select>
+          <Select label="หมวดหมู่ (genre)" {...form.register('genre')}>
+            <option value="general">ทั่วไป</option>
+            <option value="tv_show">รายการทีวี</option>
+            <option value="korean_drama">ซีรีส์เกาหลี</option>
+            <option value="anime">อนิเมะ</option>
+            <option value="animation">แอนิเมชัน</option>
+            <option value="action">หนังแอ็กชัน</option>
+            <option value="comedy">หนังตลก</option>
+            <option value="horror">หนังสยองขวัญ</option>
+            <option value="romance">หนังโรแมนติก</option>
+            <option value="thriller">หนังระทึกขวัญ</option>
+            <option value="drama">ดราม่า</option>
+            <option value="scifi">ไซไฟและแฟนตาซี</option>
           </Select>
           {serverError && (
             <p className="sm:col-span-2 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">

@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../../database/database.service';
+import { ProfilesService } from '../profiles/profiles.service';
 import type {
   HistoryContentType,
   MovieRow,
@@ -17,7 +18,7 @@ const MOVIE_COLUMNS = `
   video_url AS "videoUrl",
   duration_seconds AS "durationSeconds",
   maturity_rating AS "maturityRating",
-  status, view_count AS "viewCount",
+  status, highlight, genre, view_count AS "viewCount",
   created_at AS "createdAt",
   updated_at AS "updatedAt"
 `;
@@ -50,9 +51,18 @@ export interface ContinueWatchingItem {
 
 @Injectable()
 export class WatchHistoryService {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly profiles: ProfilesService,
+  ) {}
 
-  async getContinueWatching(userId: string, limit = 12): Promise<ContinueWatchingItem[]> {
+  async getContinueWatching(
+    userId: string,
+    profileId: string,
+    limit = 12,
+  ): Promise<ContinueWatchingItem[]> {
+    await this.profiles.assertOwnership(userId, profileId);
+
     const items = await this.db.query<WatchHistoryRow>(
       `SELECT id,
               user_id AS "userId",
@@ -65,10 +75,10 @@ export class WatchHistoryService {
               created_at AS "createdAt",
               updated_at AS "updatedAt"
        FROM watch_histories
-       WHERE user_id = $1 AND completed_at IS NULL AND progress_seconds > 0
+       WHERE profile_id = $1 AND completed_at IS NULL AND progress_seconds > 0
        ORDER BY last_watched_at DESC
        LIMIT $2`,
-      [userId, limit],
+      [profileId, limit],
     );
 
     const movieIds = items.filter((i) => i.contentType === 'movie').map((i) => i.contentId);
@@ -121,9 +131,11 @@ export class WatchHistoryService {
 
   async getOne(
     userId: string,
+    profileId: string,
     contentType: HistoryContentType,
     contentId: string,
   ): Promise<WatchHistoryRow | null> {
+    await this.profiles.assertOwnership(userId, profileId);
     return this.db.queryOne<WatchHistoryRow>(
       `SELECT id,
               user_id AS "userId",
@@ -136,12 +148,17 @@ export class WatchHistoryService {
               created_at AS "createdAt",
               updated_at AS "updatedAt"
        FROM watch_histories
-       WHERE user_id = $1 AND content_type = $2 AND content_id = $3`,
-      [userId, contentType, contentId],
+       WHERE profile_id = $1 AND content_type = $2 AND content_id = $3`,
+      [profileId, contentType, contentId],
     );
   }
 
-  async updateProgress(userId: string, dto: UpdateProgressDto): Promise<WatchHistoryRow> {
+  async updateProgress(
+    userId: string,
+    profileId: string,
+    dto: UpdateProgressDto,
+  ): Promise<WatchHistoryRow> {
+    await this.profiles.assertOwnership(userId, profileId);
     await this.assertContentExists(dto.contentType, dto.contentId);
 
     const isCompleted =
@@ -151,10 +168,10 @@ export class WatchHistoryService {
 
     const row = await this.db.queryOne<WatchHistoryRow>(
       `INSERT INTO watch_histories
-         (user_id, content_type, content_id, progress_seconds, duration_seconds,
+         (user_id, profile_id, content_type, content_id, progress_seconds, duration_seconds,
           last_watched_at, completed_at)
-       VALUES ($1, $2, $3, $4, $5, NOW(), $6)
-       ON CONFLICT (user_id, content_type, content_id) DO UPDATE SET
+       VALUES ($1, $2, $3, $4, $5, $6, NOW(), $7)
+       ON CONFLICT (profile_id, content_type, content_id) DO UPDATE SET
          progress_seconds = EXCLUDED.progress_seconds,
          duration_seconds = EXCLUDED.duration_seconds,
          last_watched_at = NOW(),
@@ -171,6 +188,7 @@ export class WatchHistoryService {
                  updated_at AS "updatedAt"`,
       [
         userId,
+        profileId,
         dto.contentType,
         dto.contentId,
         dto.progressSeconds,

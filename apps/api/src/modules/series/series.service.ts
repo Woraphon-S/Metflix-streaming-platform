@@ -22,6 +22,8 @@ const SERIES_COLUMNS = `
   backdrop_url AS "backdropUrl",
   trailer_url AS "trailerUrl",
   status,
+  highlight,
+  genre,
   view_count AS "viewCount",
   created_at AS "createdAt",
   updated_at AS "updatedAt"
@@ -139,8 +141,8 @@ export class SeriesService {
 
     const series = await this.db.queryOne<SeriesRow>(
       `INSERT INTO series
-         (title, slug, description, poster_url, backdrop_url, trailer_url, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+         (title, slug, description, poster_url, backdrop_url, trailer_url, status, highlight, genre)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING ${SERIES_COLUMNS}`,
       [
         dto.title,
@@ -150,6 +152,8 @@ export class SeriesService {
         dto.backdropUrl ?? null,
         dto.trailerUrl ?? null,
         dto.status ?? 'draft',
+        dto.highlight ?? 'none',
+        dto.genre ?? 'general',
       ],
     );
     if (!series) throw new Error('Failed to create series');
@@ -200,7 +204,9 @@ export class SeriesService {
          poster_url = COALESCE($5, poster_url),
          backdrop_url = COALESCE($6, backdrop_url),
          trailer_url = COALESCE($7, trailer_url),
-         status = COALESCE($8, status)
+         status = COALESCE($8, status),
+         highlight = COALESCE($9, highlight),
+         genre = COALESCE($10, genre)
        WHERE id = $1
        RETURNING ${SERIES_COLUMNS}`,
       [
@@ -212,6 +218,8 @@ export class SeriesService {
         dto.backdropUrl ?? null,
         dto.trailerUrl ?? null,
         dto.status ?? null,
+        dto.highlight ?? null,
+        dto.genre ?? null,
       ],
     );
     if (!series) throw new NotFoundException('Series not found');

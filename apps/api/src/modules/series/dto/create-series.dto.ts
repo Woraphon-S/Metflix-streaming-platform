@@ -7,7 +7,11 @@ import {
   MinLength,
 } from 'class-validator';
 import {
+  CONTENT_GENRES,
+  CONTENT_HIGHLIGHTS,
   CONTENT_STATUSES,
+  type ContentGenre,
+  type ContentHighlight,
   type ContentStatus,
 } from '../../../database/types';
 
@@ -42,4 +46,12 @@ export class CreateSeriesDto {
   @IsOptional()
   @IsIn(CONTENT_STATUSES)
   status?: ContentStatus;
+
+  @IsOptional()
+  @IsIn(CONTENT_HIGHLIGHTS)
+  highlight?: ContentHighlight;
+
+  @IsOptional()
+  @IsIn(CONTENT_GENRES)
+  genre?: ContentGenre;
 }

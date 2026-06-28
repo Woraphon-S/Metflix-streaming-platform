@@ -14,6 +14,7 @@ import { WatchHistoryService } from './watch-history.service';
 import { UpdateProgressDto } from './dto/update-progress.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { ProfileId } from '../../common/decorators/profile-id.decorator';
 import type { JwtPayload } from '../../common/guards/jwt-auth.guard';
 
 const ALLOWED: HistoryContentType[] = HISTORY_CONTENT_TYPES;
@@ -27,8 +28,13 @@ export class WatchHistoryController {
   getContinue(
     @CurrentUser() user: JwtPayload,
     @Query('limit') limit?: string,
+    @ProfileId() profileId?: string,
   ) {
-    return this.watchHistoryService.getContinueWatching(user.sub, Number(limit ?? 12));
+    return this.watchHistoryService.getContinueWatching(
+      user.sub,
+      this.requireProfile(profileId),
+      Number(limit ?? 12),
+    );
   }
 
   @Get(':contentType/:contentId')
@@ -36,19 +42,36 @@ export class WatchHistoryController {
     @CurrentUser() user: JwtPayload,
     @Param('contentType') contentType: string,
     @Param('contentId') contentId: string,
+    @ProfileId() profileId?: string,
   ) {
     if (!ALLOWED.includes(contentType as HistoryContentType)) {
       throw new BadRequestException('contentType must be movie or episode');
     }
     return this.watchHistoryService.getOne(
       user.sub,
+      this.requireProfile(profileId),
       contentType as HistoryContentType,
       contentId,
     );
   }
 
   @Post('progress')
-  updateProgress(@CurrentUser() user: JwtPayload, @Body() dto: UpdateProgressDto) {
-    return this.watchHistoryService.updateProgress(user.sub, dto);
+  updateProgress(
+    @CurrentUser() user: JwtPayload,
+    @Body() dto: UpdateProgressDto,
+    @ProfileId() profileId?: string,
+  ) {
+    return this.watchHistoryService.updateProgress(
+      user.sub,
+      this.requireProfile(profileId),
+      dto,
+    );
+  }
+
+  private requireProfile(profileId?: string): string {
+    if (!profileId) {
+      throw new BadRequestException('No active profile selected');
+    }
+    return profileId;
   }
 }

@@ -5,6 +5,17 @@ const config: Config = {
     './src/app/**/*.{ts,tsx}',
     './src/components/**/*.{ts,tsx}',
     './src/features/**/*.{ts,tsx}',
+    './src/lib/**/*.{ts,tsx}',
+  ],
+  // Profile avatar gradients are composed from data (lib/avatars.ts); safelist
+  // them so the JIT always emits the classes regardless of content scanning.
+  safelist: [
+    'from-emerald', 'to-primary',
+    'from-orange-500', 'to-red-500',
+    'from-violet-500', 'to-fuchsia-600',
+    'from-sky-500', 'to-indigo-600',
+    'from-rose-500', 'to-orange-400',
+    'from-slate-500', 'to-slate-700',
   ],
   theme: {
     extend: {
@@ -41,6 +52,7 @@ const config: Config = {
       fontFamily: {
         sans: [
           'Inter',
+          'Anuphan',
           'ui-sans-serif',
           'system-ui',
           '-apple-system',
@@ -48,7 +60,7 @@ const config: Config = {
           'Roboto',
           'sans-serif',
         ],
-        display: ['Sora', 'Inter', 'sans-serif'],
+        display: ['Sora', 'Anuphan', 'Inter', 'sans-serif'],
       },
       boxShadow: {
         glow: '0 0 40px rgba(14, 165, 233, 0.45)',

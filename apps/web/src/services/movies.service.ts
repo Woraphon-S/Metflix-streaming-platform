@@ -1,5 +1,7 @@
 import { api } from './api';
 import type {
+  ContentGenre,
+  ContentHighlight,
   MovieDetail,
   MovieSummary,
   PaginatedResponse,
@@ -16,6 +18,8 @@ export interface MovieAdminInput {
   durationSeconds?: number;
   maturityRating?: string;
   status?: 'draft' | 'published' | 'archived';
+  highlight?: ContentHighlight;
+  genre?: ContentGenre;
 }
 
 export const moviesService = {

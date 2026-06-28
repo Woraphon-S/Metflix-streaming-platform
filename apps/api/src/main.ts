@@ -25,7 +25,8 @@ async function bootstrap() {
 
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  const port = Number(process.env.API_PORT ?? 4000);
+  // Cloud hosts (Render, Railway, Fly, …) inject PORT; fall back to API_PORT for local dev.
+  const port = Number(process.env.PORT ?? process.env.API_PORT ?? 4000);
   await app.listen(port, '0.0.0.0');
   // eslint-disable-next-line no-console
   console.log(`[metflix-api] running on http://localhost:${port}/api`);
