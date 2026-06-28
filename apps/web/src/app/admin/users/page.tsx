@@ -20,14 +20,14 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="font-display text-2xl font-bold">Users</h1>
-        <p className="text-text-muted">Browse registered accounts.</p>
+        <h1 className="font-display text-2xl font-bold">ผู้ใช้</h1>
+        <p className="text-text-muted">เรียกดูบัญชีที่ลงทะเบียน</p>
       </header>
 
       <div className="max-w-md">
         <Input
           leading={<Search className="h-4 w-4" />}
-          placeholder="Search by email…"
+          placeholder="ค้นหาด้วยอีเมล…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -44,11 +44,11 @@ export default function AdminUsersPage() {
           <table className="w-full text-sm">
             <thead className="bg-surface/60 text-left text-xs uppercase tracking-wide text-text-muted">
               <tr>
-                <th className="px-4 py-3">User</th>
-                <th className="px-4 py-3">Email</th>
-                <th className="px-4 py-3">Role</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Joined</th>
+                <th className="px-4 py-3">ผู้ใช้</th>
+                <th className="px-4 py-3">อีเมล</th>
+                <th className="px-4 py-3">บทบาท</th>
+                <th className="px-4 py-3">สถานะ</th>
+                <th className="px-4 py-3">เข้าร่วมเมื่อ</th>
               </tr>
             </thead>
             <tbody>
@@ -73,13 +73,13 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="px-4 py-3 text-text-muted">{u.email}</td>
                   <td className="px-4 py-3">
-                    <Badge tone={u.role === 'admin' ? 'emerald' : 'primary'}>
-                      {u.role}
+                    <Badge tone={u.role === 'admin' ? 'success' : 'primary'}>
+                      {u.role === 'admin' ? 'ผู้ดูแล' : 'ผู้ใช้'}
                     </Badge>
                   </td>
                   <td className="px-4 py-3">
-                    <Badge tone={u.status === 'active' ? 'emerald' : 'warning'}>
-                      {u.status}
+                    <Badge tone={u.status === 'active' ? 'success' : 'warning'}>
+                      {u.status === 'active' ? 'ใช้งานอยู่' : 'ถูกระงับ'}
                     </Badge>
                   </td>
                   <td className="px-4 py-3 text-text-muted">
@@ -91,7 +91,7 @@ export default function AdminUsersPage() {
           </table>
         </div>
       ) : (
-        <EmptyState title="No users yet" description="Once people register, they will appear here." />
+        <EmptyState title="ยังไม่มีผู้ใช้" description="เมื่อมีผู้ลงทะเบียน รายชื่อจะปรากฏที่นี่" />
       )}
     </div>
   );

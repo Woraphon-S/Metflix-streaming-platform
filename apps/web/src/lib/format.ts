@@ -10,12 +10,12 @@ export const formatRelativeTime = (value: string | Date): string => {
   const date = typeof value === 'string' ? new Date(value) : value;
   const diffMs = Date.now() - date.getTime();
   const minutes = Math.round(diffMs / 60000);
-  if (minutes < 1) return 'just now';
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 1) return 'เมื่อสักครู่';
+  if (minutes < 60) return `${minutes} นาทีที่แล้ว`;
   const hours = Math.round(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return `${hours} ชม.ที่แล้ว`;
   const days = Math.round(hours / 24);
-  if (days < 7) return `${days}d ago`;
+  if (days < 7) return `${days} วันที่แล้ว`;
   return date.toLocaleDateString();
 };
 

@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { Activity, Film, Sparkles, Tv, Users } from 'lucide-react';
+import { Activity, Film, Tv, Users } from 'lucide-react';
 import { adminService } from '@/services/admin.service';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Badge } from '@/components/ui/Badge';
 import { formatRelativeTime } from '@/lib/format';
+import { STATUS_LABEL } from '@/lib/labels';
 
 export default function AdminDashboardPage() {
   const dashboardQ = useQuery({
@@ -17,43 +18,43 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-8">
       <header className="space-y-2">
-        <div className="inline-flex items-center gap-2 text-emerald">
-          <Sparkles className="h-5 w-5" /> Admin overview
+        <div className="text-xs font-medium uppercase tracking-wide text-text-subtle">
+          ภาพรวมผู้ดูแล
         </div>
-        <h1 className="font-display text-3xl font-extrabold">Dashboard</h1>
+        <h1 className="font-display text-3xl font-extrabold">แดชบอร์ด</h1>
         <p className="text-text-muted">
-          Snapshot of platform metrics and recent activity.
+          ภาพรวมสถิติและกิจกรรมล่าสุดของแพลตฟอร์ม
         </p>
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard
           icon={<Users className="h-4 w-4" />}
-          label="Users"
+          label="ผู้ใช้"
           value={dashboardQ.data?.totalUsers}
           loading={dashboardQ.isLoading}
         />
         <StatCard
           icon={<Film className="h-4 w-4" />}
-          label="Movies"
+          label="ภาพยนตร์"
           value={dashboardQ.data?.totalMovies}
           loading={dashboardQ.isLoading}
         />
         <StatCard
           icon={<Tv className="h-4 w-4" />}
-          label="Series"
+          label="ซีรีส์"
           value={dashboardQ.data?.totalSeries}
           loading={dashboardQ.isLoading}
         />
         <StatCard
           icon={<Tv className="h-4 w-4" />}
-          label="Episodes"
+          label="ตอน"
           value={dashboardQ.data?.totalEpisodes}
           loading={dashboardQ.isLoading}
         />
         <StatCard
           icon={<Activity className="h-4 w-4" />}
-          label="Notifications"
+          label="การแจ้งเตือน"
           value={dashboardQ.data?.totalNotifications}
           loading={dashboardQ.isLoading}
         />
@@ -62,12 +63,12 @@ export default function AdminDashboardPage() {
       <section className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-2xl border border-white/5 bg-surface/40 p-5">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-display text-lg font-semibold">Recent movies</h2>
+            <h2 className="font-display text-lg font-semibold">ภาพยนตร์ล่าสุด</h2>
             <Link
               href="/admin/movies"
-              className="text-xs uppercase tracking-wide text-emerald hover:brightness-110"
+              className="text-xs uppercase tracking-wide text-text-muted hover:text-text"
             >
-              Manage
+              จัดการ
             </Link>
           </div>
           {dashboardQ.isLoading ? (
@@ -87,30 +88,30 @@ export default function AdminDashboardPage() {
                   <Badge
                     tone={
                       m.status === 'published'
-                        ? 'emerald'
+                        ? 'success'
                         : m.status === 'archived'
                         ? 'warning'
                         : 'neutral'
                     }
                   >
-                    {m.status}
+                    {STATUS_LABEL[m.status] ?? m.status}
                   </Badge>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-text-muted">No movies yet.</p>
+            <p className="text-sm text-text-muted">ยังไม่มีภาพยนตร์</p>
           )}
         </div>
 
         <div className="rounded-2xl border border-white/5 bg-surface/40 p-5">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-display text-lg font-semibold">Recent series</h2>
+            <h2 className="font-display text-lg font-semibold">ซีรีส์ล่าสุด</h2>
             <Link
               href="/admin/series"
-              className="text-xs uppercase tracking-wide text-emerald hover:brightness-110"
+              className="text-xs uppercase tracking-wide text-text-muted hover:text-text"
             >
-              Manage
+              จัดการ
             </Link>
           </div>
           {dashboardQ.isLoading ? (
@@ -128,20 +129,20 @@ export default function AdminDashboardPage() {
                 >
                   <span className="line-clamp-1 font-medium">{s.title}</span>
                   <span className="text-xs text-text-muted">
-                    {s.seasonsCount} seasons · {s.episodesCount} episodes
+                    {s.seasonsCount} ซีซัน · {s.episodesCount} ตอน
                   </span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-text-muted">No series yet.</p>
+            <p className="text-sm text-text-muted">ยังไม่มีซีรีส์</p>
           )}
         </div>
       </section>
 
       <section className="rounded-2xl border border-white/5 bg-surface/40 p-5">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-display text-lg font-semibold">Recent activity</h2>
+          <h2 className="font-display text-lg font-semibold">กิจกรรมล่าสุด</h2>
         </div>
         {dashboardQ.isLoading ? (
           <Skeleton className="h-32 w-full" />
@@ -155,7 +156,7 @@ export default function AdminDashboardPage() {
                 <Badge tone="primary">{log.action}</Badge>
                 <span className="text-text-muted">{log.entityType}</span>
                 <span className="text-text-subtle">·</span>
-                <span className="text-text-subtle">{log.adminEmail ?? 'system'}</span>
+                <span className="text-text-subtle">{log.adminEmail ?? 'ระบบ'}</span>
                 <span className="ml-auto text-xs text-text-subtle">
                   {formatRelativeTime(log.createdAt)}
                 </span>
@@ -163,7 +164,7 @@ export default function AdminDashboardPage() {
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-text-muted">No activity yet.</p>
+          <p className="text-sm text-text-muted">ยังไม่มีกิจกรรม</p>
         )}
       </section>
     </div>

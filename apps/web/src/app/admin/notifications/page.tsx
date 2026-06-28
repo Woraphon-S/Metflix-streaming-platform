@@ -38,6 +38,15 @@ const TYPES: NotificationType[] = [
   'security',
 ];
 
+const TYPE_LABELS: Record<NotificationType, string> = {
+  admin_message: 'ข้อความจากผู้ดูแล',
+  system: 'ระบบ',
+  movie_published: 'เผยแพร่ภาพยนตร์',
+  series_published: 'เผยแพร่ซีรีส์',
+  episode_published: 'เผยแพร่ตอนใหม่',
+  security: 'ความปลอดภัย',
+};
+
 export default function AdminNotificationsPage() {
   const [sent, setSent] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -68,11 +77,11 @@ export default function AdminNotificationsPage() {
       <header className="space-y-2">
         <div className="inline-flex items-center gap-2 text-emerald">
           <Megaphone className="h-5 w-5" />
-          <span className="text-xs uppercase tracking-wide">Notifications</span>
+          <span className="text-xs uppercase tracking-wide">การแจ้งเตือน</span>
         </div>
-        <h1 className="font-display text-2xl font-bold">Send a notification</h1>
+        <h1 className="font-display text-2xl font-bold">ส่งการแจ้งเตือน</h1>
         <p className="text-text-muted">
-          Broadcast a message to all users, or target a single account by user ID.
+          ส่งข้อความถึงผู้ใช้ทุกคน หรือระบุบัญชีเดียวด้วยรหัสผู้ใช้ (ID)
         </p>
       </header>
 
@@ -84,30 +93,30 @@ export default function AdminNotificationsPage() {
         className="glass-strong grid max-w-3xl gap-4 rounded-2xl p-6 shadow-card sm:grid-cols-2"
       >
         <Select
-          label="Type"
+          label="ประเภท"
           className="sm:col-span-1"
           {...form.register('type')}
         >
           {TYPES.map((t) => (
             <option key={t} value={t}>
-              {t.replace('_', ' ')}
+              {TYPE_LABELS[t]}
             </option>
           ))}
         </Select>
         <Input
-          label="Target user ID (optional)"
-          placeholder="Leave blank to broadcast"
-          hint="Send to a specific user by id, or leave blank for everyone."
+          label="ส่งถึงผู้ใช้ (ID) (ไม่บังคับ)"
+          placeholder="เว้นว่างเพื่อส่งถึงผู้ใช้ทุกคน"
+          hint="ส่งถึงผู้ใช้ที่ระบุด้วย id หรือเว้นว่างเพื่อส่งถึงทุกคน"
           {...form.register('targetUserId')}
         />
         <Input
-          label="Title"
+          label="หัวข้อ"
           className="sm:col-span-2"
           error={form.formState.errors.title?.message}
           {...form.register('title')}
         />
         <Textarea
-          label="Message"
+          label="ข้อความ"
           rows={4}
           className="sm:col-span-2"
           error={form.formState.errors.message?.message}
@@ -121,7 +130,7 @@ export default function AdminNotificationsPage() {
         <div className="sm:col-span-2 flex items-center justify-end gap-3">
           {sent && (
             <span className="inline-flex items-center gap-1 text-sm text-emerald">
-              <CheckCircle2 className="h-4 w-4" /> Notification sent
+              <CheckCircle2 className="h-4 w-4" /> ส่งการแจ้งเตือนแล้ว
             </span>
           )}
           <Button
@@ -130,7 +139,7 @@ export default function AdminNotificationsPage() {
             leading={<Send className="h-4 w-4" />}
             loading={sendMutation.isPending}
           >
-            Send notification
+            ส่งการแจ้งเตือน
           </Button>
         </div>
       </form>

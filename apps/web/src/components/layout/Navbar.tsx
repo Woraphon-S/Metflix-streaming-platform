@@ -138,8 +138,8 @@ export function Navbar() {
               <Link
                 href="/admin"
                 className={cn(
-                  'flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-emerald',
-                  pathname.startsWith('/admin') ? 'text-emerald' : 'text-text-muted',
+                  'flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-text',
+                  pathname.startsWith('/admin') ? 'text-text' : 'text-text-muted',
                 )}
               >
                 <ShieldCheck className="h-4 w-4" />
@@ -218,7 +218,7 @@ export function Navbar() {
                     {user.email}
                     {user.role === 'admin' && (
                       <div className="mt-1">
-                        <Badge tone="emerald">ผู้ดูแล</Badge>
+                        <Badge tone="neutral">ผู้ดูแล</Badge>
                       </div>
                     )}
                   </div>
@@ -330,7 +330,7 @@ export function Navbar() {
             {user?.role === 'admin' && (
               <Link
                 href="/admin"
-                className="rounded-lg px-3 py-2 text-sm text-emerald hover:bg-white/5"
+                className="rounded-lg px-3 py-2 text-sm text-text hover:bg-white/5"
               >
                 แดชบอร์ดผู้ดูแล
               </Link>

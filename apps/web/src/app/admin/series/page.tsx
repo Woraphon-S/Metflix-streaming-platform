@@ -16,9 +16,10 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { seriesService, type SeriesAdminInput } from '@/services/series.service';
 import { extractErrorMessage } from '@/services/api';
+import { STATUS_LABEL } from '@/lib/labels';
 
 const seriesSchema = z.object({
-  title: z.string().min(1, 'Required').max(200),
+  title: z.string().min(1, 'จำเป็นต้องกรอก').max(200),
   description: z.string().max(4000).optional().or(z.literal('')),
   posterUrl: z.string().url().optional().or(z.literal('')),
   backdropUrl: z.string().url().optional().or(z.literal('')),
@@ -185,18 +186,18 @@ export default function AdminSeriesPage() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-bold">Series</h1>
-          <p className="text-text-muted">Manage series, seasons, and episodes.</p>
+          <h1 className="font-display text-2xl font-bold">ซีรีส์</h1>
+          <p className="text-text-muted">จัดการซีรีส์ ซีซัน และตอน</p>
         </div>
         <Button leading={<Plus className="h-4 w-4" />} onClick={startCreate}>
-          New series
+          เพิ่มซีรีส์
         </Button>
       </header>
 
       <div className="max-w-md">
         <Input
           leading={<Search className="h-4 w-4" />}
-          placeholder="Search series…"
+          placeholder="ค้นหาซีรีส์…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -232,13 +233,13 @@ export default function AdminSeriesPage() {
                       {series.title}
                     </h3>
                     <Badge
-                      tone={series.status === 'published' ? 'emerald' : 'neutral'}
+                      tone={series.status === 'published' ? 'success' : 'neutral'}
                     >
-                      {series.status}
+                      {STATUS_LABEL[series.status] ?? series.status}
                     </Badge>
                   </div>
                   <p className="text-xs text-text-muted">
-                    {series.seasonsCount} seasons · {series.episodesCount} episodes ·
+                    {series.seasonsCount} ซีซัน · {series.episodesCount} ตอน ·
                     slug: {series.slug}
                   </p>
                 </div>
@@ -252,18 +253,18 @@ export default function AdminSeriesPage() {
                     leading={<Pencil className="h-4 w-4" />}
                     onClick={() => startEdit(series.id)}
                   >
-                    Edit
+                    แก้ไข
                   </Button>
                   <Button
                     variant="danger"
                     size="sm"
                     leading={<Trash2 className="h-4 w-4" />}
                     onClick={() => {
-                      if (confirm(`Delete "${series.title}"?`))
+                      if (confirm(`ลบ "${series.title}"?`))
                         removeSeries.mutate(series.id);
                     }}
                   >
-                    Delete
+                    ลบ
                   </Button>
                 </div>
               </button>
@@ -275,7 +276,7 @@ export default function AdminSeriesPage() {
                     <div className="space-y-4">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <h4 className="font-display text-sm font-semibold">
-                          Seasons & episodes
+                          ซีซันและตอน
                         </h4>
                         <Button
                           variant="ghost"
@@ -293,7 +294,7 @@ export default function AdminSeriesPage() {
                             setSeasonOpenFor(series.id);
                           }}
                         >
-                          Add season
+                          เพิ่มซีซัน
                         </Button>
                       </div>
                       {detail.seasons.length > 0 ? (
@@ -304,7 +305,7 @@ export default function AdminSeriesPage() {
                           >
                             <div className="flex flex-wrap items-center justify-between gap-2">
                               <div className="font-display text-sm">
-                                Season {season.seasonNumber} —{' '}
+                                ซีซัน {season.seasonNumber} —{' '}
                                 <span className="text-text-muted">{season.title}</span>
                               </div>
                               <Button
@@ -327,7 +328,7 @@ export default function AdminSeriesPage() {
                                   setEpisodeOpenFor({ seriesId: series.id });
                                 }}
                               >
-                                Add episode
+                                เพิ่มตอน
                               </Button>
                             </div>
                             {season.episodes.length ? (
@@ -343,25 +344,25 @@ export default function AdminSeriesPage() {
                                     <Badge
                                       tone={
                                         ep.status === 'published'
-                                          ? 'emerald'
+                                          ? 'success'
                                           : 'neutral'
                                       }
                                     >
-                                      {ep.status}
+                                      {STATUS_LABEL[ep.status] ?? ep.status}
                                     </Badge>
                                   </li>
                                 ))}
                               </ul>
                             ) : (
                               <p className="mt-2 text-xs text-text-muted">
-                                No episodes in this season.
+                                ยังไม่มีตอนในซีซันนี้
                               </p>
                             )}
                           </div>
                         ))
                       ) : (
                         <p className="text-sm text-text-muted">
-                          No seasons yet. Add the first season to start.
+                          ยังไม่มีซีซัน เพิ่มซีซันแรกเพื่อเริ่มต้น
                         </p>
                       )}
                     </div>
@@ -373,9 +374,9 @@ export default function AdminSeriesPage() {
         </ul>
       ) : (
         <EmptyState
-          title="No series yet"
-          description="Add the first series to the catalog."
-          action={<Button onClick={startCreate}>New series</Button>}
+          title="ยังไม่มีซีรีส์"
+          description="เพิ่มซีรีส์เรื่องแรกเข้าคลัง"
+          action={<Button onClick={startCreate}>เพิ่มซีรีส์</Button>}
         />
       )}
 
@@ -385,7 +386,7 @@ export default function AdminSeriesPage() {
           setSeriesOpen(false);
           setEditingSeries(null);
         }}
-        title={editingSeries ? 'Edit series' : 'New series'}
+        title={editingSeries ? 'แก้ไขซีรีส์' : 'เพิ่มซีรีส์'}
         size="lg"
       >
         <form
@@ -394,23 +395,23 @@ export default function AdminSeriesPage() {
         >
           <Input
             className="sm:col-span-2"
-            label="Title"
+            label="ชื่อเรื่อง"
             error={seriesForm.formState.errors.title?.message}
             {...seriesForm.register('title')}
           />
           <Textarea
             className="sm:col-span-2"
-            label="Description"
+            label="คำอธิบาย"
             rows={3}
             {...seriesForm.register('description')}
           />
-          <Input label="Poster URL" {...seriesForm.register('posterUrl')} />
-          <Input label="Backdrop URL" {...seriesForm.register('backdropUrl')} />
-          <Input label="Trailer URL" {...seriesForm.register('trailerUrl')} />
-          <Select label="Status" {...seriesForm.register('status')}>
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-            <option value="archived">Archived</option>
+          <Input label="ลิงก์โปสเตอร์" {...seriesForm.register('posterUrl')} />
+          <Input label="ลิงก์ภาพพื้นหลัง" {...seriesForm.register('backdropUrl')} />
+          <Input label="ลิงก์ตัวอย่าง" {...seriesForm.register('trailerUrl')} />
+          <Select label="สถานะ" {...seriesForm.register('status')}>
+            <option value="draft">ฉบับร่าง</option>
+            <option value="published">เผยแพร่แล้ว</option>
+            <option value="archived">เก็บถาวร</option>
           </Select>
           {serverError && (
             <p className="sm:col-span-2 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
@@ -426,10 +427,10 @@ export default function AdminSeriesPage() {
                 setEditingSeries(null);
               }}
             >
-              Cancel
+              ยกเลิก
             </Button>
             <Button type="submit" loading={saveSeries.isPending}>
-              {editingSeries ? 'Save changes' : 'Create series'}
+              {editingSeries ? 'บันทึก' : 'สร้างซีรีส์'}
             </Button>
           </div>
         </form>
@@ -438,34 +439,34 @@ export default function AdminSeriesPage() {
       <Modal
         open={!!seasonOpenFor}
         onClose={() => setSeasonOpenFor(null)}
-        title="Add season"
+        title="เพิ่มซีซัน"
       >
         <form
           onSubmit={seasonForm.handleSubmit((values) => createSeason.mutate(values))}
           className="space-y-4"
         >
           <Input
-            label="Season number"
+            label="หมายเลขซีซัน"
             type="number"
             error={seasonForm.formState.errors.seasonNumber?.message}
             {...seasonForm.register('seasonNumber')}
           />
           <Input
-            label="Title"
+            label="ชื่อเรื่อง"
             error={seasonForm.formState.errors.title?.message}
             {...seasonForm.register('title')}
           />
-          <Textarea label="Description" {...seasonForm.register('description')} />
+          <Textarea label="คำอธิบาย" {...seasonForm.register('description')} />
           <div className="flex items-center justify-end gap-2 pt-2">
             <Button
               type="button"
               variant="ghost"
               onClick={() => setSeasonOpenFor(null)}
             >
-              Cancel
+              ยกเลิก
             </Button>
             <Button type="submit" loading={createSeason.isPending}>
-              Create season
+              สร้างซีซัน
             </Button>
           </div>
         </form>
@@ -474,7 +475,7 @@ export default function AdminSeriesPage() {
       <Modal
         open={!!episodeOpenFor}
         onClose={() => setEpisodeOpenFor(null)}
-        title="Add episode"
+        title="เพิ่มตอน"
         size="lg"
       >
         <form
@@ -483,39 +484,39 @@ export default function AdminSeriesPage() {
         >
           <Input
             className="sm:col-span-2"
-            label="Title"
+            label="ชื่อเรื่อง"
             error={episodeForm.formState.errors.title?.message}
             {...episodeForm.register('title')}
           />
           <Input
-            label="Episode number"
+            label="หมายเลขตอน"
             type="number"
             error={episodeForm.formState.errors.episodeNumber?.message}
             {...episodeForm.register('episodeNumber')}
           />
           <Input
-            label="Duration (seconds)"
+            label="ความยาว (วินาที)"
             type="number"
             {...episodeForm.register('durationSeconds')}
           />
           <Input
             className="sm:col-span-2"
-            label="Video URL"
+            label="ลิงก์วิดีโอ"
             {...episodeForm.register('videoUrl')}
           />
           <Textarea
             className="sm:col-span-2"
-            label="Description"
+            label="คำอธิบาย"
             {...episodeForm.register('description')}
           />
           <Select
-            label="Status"
+            label="สถานะ"
             className="sm:col-span-2"
             {...episodeForm.register('status')}
           >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-            <option value="archived">Archived</option>
+            <option value="draft">ฉบับร่าง</option>
+            <option value="published">เผยแพร่แล้ว</option>
+            <option value="archived">เก็บถาวร</option>
           </Select>
           <input type="hidden" {...episodeForm.register('seasonId')} />
           <div className="sm:col-span-2 flex items-center justify-end gap-2 pt-2">
@@ -524,10 +525,10 @@ export default function AdminSeriesPage() {
               variant="ghost"
               onClick={() => setEpisodeOpenFor(null)}
             >
-              Cancel
+              ยกเลิก
             </Button>
             <Button type="submit" loading={createEpisode.isPending}>
-              Create episode
+              สร้างตอน
             </Button>
           </div>
         </form>

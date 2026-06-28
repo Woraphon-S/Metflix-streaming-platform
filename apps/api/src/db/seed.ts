@@ -11,10 +11,9 @@ if (!connectionString) {
 
 const pool = new Pool({ connectionString });
 
-const SAMPLE_VIDEO =
-  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+const SAMPLE_VIDEO = 'https://www.w3schools.com/html/mov_bbb.mp4';
 const SAMPLE_TRAILER =
-  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4';
+  'https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4';
 
 const pic = (seed: string) => ({
   posterUrl: `https://picsum.photos/seed/${seed}/600/900`,
@@ -291,6 +290,8 @@ async function seedMovies(): Promise<void> {
          description = EXCLUDED.description,
          poster_url = EXCLUDED.poster_url,
          backdrop_url = EXCLUDED.backdrop_url,
+         video_url = EXCLUDED.video_url,
+         trailer_url = EXCLUDED.trailer_url,
          highlight = EXCLUDED.highlight,
          genre = EXCLUDED.genre`,
       [

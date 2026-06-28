@@ -17,9 +17,10 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { moviesService, type MovieAdminInput } from '@/services/movies.service';
 import { extractErrorMessage } from '@/services/api';
 import { formatDuration } from '@/lib/format';
+import { STATUS_LABEL } from '@/lib/labels';
 
 const movieSchema = z.object({
-  title: z.string().min(1, 'Required').max(200),
+  title: z.string().min(1, 'จำเป็นต้องกรอก').max(200),
   description: z.string().max(4000).optional().or(z.literal('')),
   posterUrl: z.string().url().optional().or(z.literal('')),
   backdropUrl: z.string().url().optional().or(z.literal('')),
@@ -152,18 +153,18 @@ export default function AdminMoviesPage() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-bold">Movies</h1>
-          <p className="text-text-muted">Create, edit, and publish films in the catalog.</p>
+          <h1 className="font-display text-2xl font-bold">ภาพยนตร์</h1>
+          <p className="text-text-muted">สร้าง แก้ไข และเผยแพร่ภาพยนตร์ในคลัง</p>
         </div>
         <Button leading={<Plus className="h-4 w-4" />} onClick={startCreate}>
-          New movie
+          เพิ่มภาพยนตร์
         </Button>
       </header>
 
       <div className="max-w-md">
         <Input
           leading={<Search className="h-4 w-4" />}
-          placeholder="Search movies…"
+          placeholder="ค้นหาภาพยนตร์…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -188,13 +189,13 @@ export default function AdminMoviesPage() {
                   <Badge
                     tone={
                       movie.status === 'published'
-                        ? 'emerald'
+                        ? 'success'
                         : movie.status === 'archived'
                         ? 'warning'
                         : 'neutral'
                     }
                   >
-                    {movie.status}
+                    {STATUS_LABEL[movie.status] ?? movie.status}
                   </Badge>
                 </div>
                 <p className="text-xs text-text-muted">
@@ -208,18 +209,18 @@ export default function AdminMoviesPage() {
                   leading={<Pencil className="h-4 w-4" />}
                   onClick={() => startEdit(movie.id)}
                 >
-                  Edit
+                  แก้ไข
                 </Button>
                 <Button
                   variant="danger"
                   size="sm"
                   leading={<Trash2 className="h-4 w-4" />}
                   onClick={() => {
-                    if (confirm(`Delete "${movie.title}"?`)) removeMutation.mutate(movie.id);
+                    if (confirm(`ลบ "${movie.title}"?`)) removeMutation.mutate(movie.id);
                   }}
                   loading={removeMutation.isPending}
                 >
-                  Delete
+                  ลบ
                 </Button>
               </div>
             </li>
@@ -227,9 +228,9 @@ export default function AdminMoviesPage() {
         </ul>
       ) : (
         <EmptyState
-          title="No movies yet"
-          description="Add the first movie to the catalog to publish it for users."
-          action={<Button onClick={startCreate}>New movie</Button>}
+          title="ยังไม่มีภาพยนตร์"
+          description="เพิ่มภาพยนตร์เรื่องแรกเข้าคลังเพื่อเผยแพร่ให้ผู้ใช้"
+          action={<Button onClick={startCreate}>เพิ่มภาพยนตร์</Button>}
         />
       )}
 
@@ -239,7 +240,7 @@ export default function AdminMoviesPage() {
           setOpen(false);
           setEditing(null);
         }}
-        title={editing ? 'Edit movie' : 'New movie'}
+        title={editing ? 'แก้ไขภาพยนตร์' : 'เพิ่มภาพยนตร์'}
         size="lg"
       >
         <form
@@ -248,30 +249,30 @@ export default function AdminMoviesPage() {
         >
           <Input
             className="sm:col-span-2"
-            label="Title"
+            label="ชื่อเรื่อง"
             error={form.formState.errors.title?.message}
             {...form.register('title')}
           />
           <Textarea
             className="sm:col-span-2"
-            label="Description"
+            label="คำอธิบาย"
             rows={3}
             {...form.register('description')}
           />
-          <Input label="Poster URL" {...form.register('posterUrl')} />
-          <Input label="Backdrop URL" {...form.register('backdropUrl')} />
-          <Input label="Trailer URL" {...form.register('trailerUrl')} />
-          <Input label="Video URL" {...form.register('videoUrl')} />
+          <Input label="ลิงก์โปสเตอร์" {...form.register('posterUrl')} />
+          <Input label="ลิงก์ภาพพื้นหลัง" {...form.register('backdropUrl')} />
+          <Input label="ลิงก์ตัวอย่าง" {...form.register('trailerUrl')} />
+          <Input label="ลิงก์วิดีโอ" {...form.register('videoUrl')} />
           <Input
-            label="Duration (seconds)"
+            label="ความยาว (วินาที)"
             type="number"
             {...form.register('durationSeconds')}
           />
-          <Input label="Maturity rating" placeholder="PG-13" {...form.register('maturityRating')} />
-          <Select label="Status" {...form.register('status')}>
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-            <option value="archived">Archived</option>
+          <Input label="เรตติ้ง" placeholder="PG-13" {...form.register('maturityRating')} />
+          <Select label="สถานะ" {...form.register('status')}>
+            <option value="draft">ฉบับร่าง</option>
+            <option value="published">เผยแพร่แล้ว</option>
+            <option value="archived">เก็บถาวร</option>
           </Select>
           <Select label="ป้ายไฮไลต์ (badge บนการ์ด)" {...form.register('highlight')}>
             <option value="none">ไม่มี</option>
@@ -308,10 +309,10 @@ export default function AdminMoviesPage() {
                 setEditing(null);
               }}
             >
-              Cancel
+              ยกเลิก
             </Button>
             <Button type="submit" loading={saveMutation.isPending}>
-              {editing ? 'Save changes' : 'Create movie'}
+              {editing ? 'บันทึก' : 'สร้างภาพยนตร์'}
             </Button>
           </div>
         </form>

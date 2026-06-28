@@ -15,11 +15,11 @@ import { AuthGuard } from '@/components/layout/AuthGuard';
 import { cn } from '@/lib/cn';
 
 const NAV = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-  { href: '/admin/movies', label: 'Movies', icon: Film },
-  { href: '/admin/series', label: 'Series', icon: Tv },
-  { href: '/admin/users', label: 'Users', icon: Users },
-  { href: '/admin/notifications', label: 'Notifications', icon: Bell },
+  { href: '/admin', label: 'แดชบอร์ด', icon: LayoutDashboard, exact: true },
+  { href: '/admin/movies', label: 'ภาพยนตร์', icon: Film },
+  { href: '/admin/series', label: 'ซีรีส์', icon: Tv },
+  { href: '/admin/users', label: 'ผู้ใช้', icon: Users },
+  { href: '/admin/notifications', label: 'การแจ้งเตือน', icon: Bell },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -30,10 +30,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <AppShell>
         <div className="mx-auto flex max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:px-8">
           <aside className="sticky top-24 hidden h-fit w-56 flex-shrink-0 md:block">
-            <div className="rounded-2xl border border-emerald/20 bg-surface/40 p-4">
-              <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-wide text-emerald">
+            <div className="rounded-2xl border border-white/10 bg-surface/40 p-4">
+              <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-wide text-text-subtle">
                 <ListVideo className="h-4 w-4" />
-                Admin console
+                คอนโซลผู้ดูแล
               </div>
               <nav className="space-y-1">
                 {NAV.map((item) => {
@@ -48,7 +48,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       className={cn(
                         'flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-colors',
                         active
-                          ? 'bg-emerald/10 text-emerald shadow-glowEmerald'
+                          ? 'bg-white/10 text-text'
                           : 'text-text-muted hover:bg-white/5 hover:text-text',
                       )}
                     >
@@ -73,7 +73,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     className={cn(
                       'rounded-full px-3 py-1.5 text-xs',
                       active
-                        ? 'bg-emerald text-background'
+                        ? 'bg-white/15 text-text'
                         : 'bg-surface/70 text-text-muted',
                     )}
                   >

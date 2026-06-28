@@ -1,13 +1,14 @@
 import { cn } from '@/lib/cn';
 
-type Tone = 'neutral' | 'primary' | 'emerald' | 'warning' | 'danger';
+type Tone = 'neutral' | 'primary' | 'emerald' | 'success' | 'warning' | 'danger';
 
 const TONE: Record<Tone, string> = {
-  neutral: 'bg-white/8 text-text-muted border border-white/10',
-  primary: 'bg-primary/15 text-primary-400 border border-primary/30',
-  emerald: 'bg-emerald/15 text-emerald border border-emerald/30',
-  warning: 'bg-warning/15 text-warning border border-warning/30',
-  danger: 'bg-danger/15 text-danger border border-danger/30',
+  neutral: 'bg-surface-soft text-text-muted',
+  primary: 'bg-primary text-white',
+  emerald: 'bg-emerald text-background',
+  success: 'bg-success text-background',
+  warning: 'bg-warning text-background',
+  danger: 'bg-danger text-white',
 };
 
 interface BadgeProps {
@@ -20,7 +21,7 @@ export function Badge({ tone = 'neutral', className, children }: BadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium uppercase tracking-wide',
+        'inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide',
         TONE[tone],
         className,
       )}

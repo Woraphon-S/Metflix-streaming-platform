@@ -21,8 +21,7 @@ The project is a full-stack monorepo. The frontend is a Next.js 14 App Router ap
   <img src="screenshots/detail.png" width="49%" alt="Title detail" />
 </p>
 <p align="center">
-  <img src="screenshots/profiles.png" width="49%" alt="Who is watching" />
-  <img src="screenshots/admin.png" width="49%" alt="Admin console" />
+  <img src="screenshots/admin.png" width="80%" alt="Admin console" />
 </p>
 
 ---
