@@ -8,7 +8,6 @@ import { Spinner } from '@/components/ui/Spinner';
 interface AuthGuardProps {
   children: React.ReactNode;
   requireRole?: 'admin' | 'user';
-  /** When true (default) a viewer profile must be selected; redirects to /profiles otherwise. */
   requireProfile?: boolean;
 }
 
@@ -22,7 +21,6 @@ export function AuthGuard({
   const activeProfile = useAuthStore((s) => s.activeProfile);
   const hydrated = useAuthStore((s) => s.hydrated);
 
-  // Admins go straight to the console — they don't pick a viewer profile.
   const needsProfile = requireProfile && requireRole !== 'admin';
 
   useEffect(() => {

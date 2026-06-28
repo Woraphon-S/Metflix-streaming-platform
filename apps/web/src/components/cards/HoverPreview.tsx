@@ -49,7 +49,6 @@ export function HoverPreview(props: HoverPreviewProps) {
     };
   }, []);
 
-  // Stale anchor on scroll/resize — just close.
   useEffect(() => {
     if (!rect) return;
     const onChange = () => setRect(null);

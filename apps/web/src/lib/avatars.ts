@@ -1,8 +1,5 @@
 import type { ProfileAvatarKey } from '@metflix/shared-types';
 
-// Preset avatar gradients for Netflix-style profiles. The keys mirror the API's
-// apps/api/src/modules/profiles/profile-avatars.ts. Full literal class strings
-// so Tailwind's JIT can detect them (src/lib is in the content globs).
 export const AVATARS: Record<ProfileAvatarKey, { label: string; gradient: string }> = {
   aurora: { label: 'Aurora', gradient: 'from-emerald to-primary' },
   ember: { label: 'Ember', gradient: 'from-orange-500 to-red-500' },

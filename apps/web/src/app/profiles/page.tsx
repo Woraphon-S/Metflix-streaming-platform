@@ -27,7 +27,6 @@ function WhoIsWatching() {
 
   const choose = (profile: Profile) => {
     setActiveProfile(profile);
-    // Per-profile data (My List, Continue watching) must refetch for the new identity.
     qc.invalidateQueries();
     router.push('/browse');
   };

@@ -60,7 +60,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <footer className="mt-16 border-t border-white/5 bg-surface/40">
         <div className="mx-auto max-w-[1800px] px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-10 lg:flex-row lg:justify-between">
-            {/* Brand + social */}
             <div className="space-y-4">
               <Logo />
               <p className="max-w-xs text-sm text-text-muted">
@@ -80,7 +79,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </div>
             </div>
 
-            {/* Link columns */}
             <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:gap-16">
               {FOOTER_COLUMNS.map((col) => (
                 <div key={col.title} className="space-y-3">

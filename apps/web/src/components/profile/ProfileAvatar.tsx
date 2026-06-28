@@ -1,12 +1,6 @@
 import { avatarGradient } from '@/lib/avatars';
 import { cn } from '@/lib/cn';
 
-// Avatar gradients are applied from data, so the class names never appear as
-// literals in a scanned file. Listing them here (a scanned component) lets the
-// Tailwind JIT emit them without a dev-server restart:
-// from-emerald to-primary from-orange-500 to-red-500 from-violet-500 to-fuchsia-600
-// from-sky-500 to-indigo-600 from-rose-500 to-orange-400 from-slate-500 to-slate-700
-
 type Size = 'sm' | 'md' | 'lg' | 'xl';
 
 const SIZES: Record<Size, string> = {

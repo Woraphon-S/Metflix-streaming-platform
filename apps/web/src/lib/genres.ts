@@ -15,7 +15,6 @@ export const GENRE_LABELS: Record<ContentGenre, string> = {
   general: 'ทั่วไป',
 };
 
-// Order the genre rows appear on the home page.
 export const GENRE_ORDER: ContentGenre[] = [
   'tv_show',
   'korean_drama',

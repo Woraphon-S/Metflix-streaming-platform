@@ -215,19 +215,11 @@ CREATE TABLE IF NOT EXISTS admin_activity_logs (
 CREATE INDEX IF NOT EXISTS idx_admin_activity_logs_admin ON admin_activity_logs(admin_id);
 CREATE INDEX IF NOT EXISTS idx_admin_activity_logs_created ON admin_activity_logs(created_at);
 
--- ===========================================================================
--- Netflix-style multi-profile migration.
--- The original profiles table was 1:1 (user_id UNIQUE). We relax it to 1:many,
--- mark one profile per account as primary, and scope watchlists / watch
--- histories by profile_id. All statements are idempotent so the schema can be
--- reapplied safely on every boot.
--- ===========================================================================
 ALTER TABLE profiles DROP CONSTRAINT IF EXISTS profiles_user_id_key;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_key TEXT;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_primary BOOLEAN NOT NULL DEFAULT false;
 CREATE INDEX IF NOT EXISTS idx_profiles_user ON profiles(user_id);
 
--- Promote the oldest profile of each account to primary if it has none yet.
 UPDATE profiles p SET is_primary = true
 WHERE p.is_primary = false
   AND NOT EXISTS (
@@ -237,7 +229,6 @@ WHERE p.is_primary = false
     SELECT MIN(r.created_at) FROM profiles r WHERE r.user_id = p.user_id
   );
 
--- watchlists -> per profile
 ALTER TABLE watchlists
   ADD COLUMN IF NOT EXISTS profile_id UUID REFERENCES profiles(id) ON DELETE CASCADE;
 UPDATE watchlists w SET profile_id = (
@@ -251,7 +242,6 @@ EXCEPTION WHEN duplicate_object THEN NULL; WHEN duplicate_table THEN NULL;
 END $$;
 CREATE INDEX IF NOT EXISTS idx_watchlists_profile ON watchlists(profile_id);
 
--- watch_histories -> per profile
 ALTER TABLE watch_histories
   ADD COLUMN IF NOT EXISTS profile_id UUID REFERENCES profiles(id) ON DELETE CASCADE;
 UPDATE watch_histories w SET profile_id = (
@@ -265,12 +255,9 @@ EXCEPTION WHEN duplicate_object THEN NULL; WHEN duplicate_table THEN NULL;
 END $$;
 CREATE INDEX IF NOT EXISTS idx_watch_histories_profile ON watch_histories(profile_id);
 
--- Editorial highlight tag shown as a badge on cards
--- (none | new | top10 | new_episode | new_season). Managed from the admin console.
 ALTER TABLE movies ADD COLUMN IF NOT EXISTS highlight TEXT NOT NULL DEFAULT 'none';
 ALTER TABLE series ADD COLUMN IF NOT EXISTS highlight TEXT NOT NULL DEFAULT 'none';
 
--- Genre / category used to group titles into rows on the home page.
 ALTER TABLE movies ADD COLUMN IF NOT EXISTS genre TEXT NOT NULL DEFAULT 'general';
 ALTER TABLE series ADD COLUMN IF NOT EXISTS genre TEXT NOT NULL DEFAULT 'general';
 `;

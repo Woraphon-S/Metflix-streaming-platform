@@ -41,7 +41,6 @@ metflix/
 ├── packages/
 │   └── shared-types/        Type definitions shared by web + api consumers
 ├── docker-compose.yml
-├── .env.example
 └── README.md
 ```
 
@@ -52,8 +51,7 @@ metflix/
 The fastest path. Brings up Postgres, the API, and the web app, applies the SQL schema, and seeds demo content automatically on first boot.
 
 ```bash
-# 1. Copy env defaults
-cp .env.example .env       # on Windows: copy .env.example .env
+# 1. (optional) create a .env at the repo root to override the compose defaults
 
 # 2. Build and start everything
 docker compose up -d --build
@@ -88,11 +86,9 @@ You'll need Node 20+ and a running Postgres on port 5432. Then:
 # Install all workspaces
 npm install
 
-# Copy env file
-cp .env.example .env
-
-# Update DATABASE_URL in .env to your local postgres, e.g.:
+# Create a .env at the repo root with at least:
 # DATABASE_URL=postgresql://postgres:postgres@localhost:5432/metflix
+# JWT_SECRET=change_me_to_a_long_random_string
 
 # Build the API first so dist/db/seed.js exists, then seed
 npm run build:api
@@ -226,7 +222,7 @@ get a 403 from `RolesGuard`.
 
 ## Environment variables
 
-See `.env.example` for the full reference. Key ones:
+Set these in a `.env` file at the repo root:
 
 | Variable                  | Purpose                                                      |
 | ------------------------- | ------------------------------------------------------------ |

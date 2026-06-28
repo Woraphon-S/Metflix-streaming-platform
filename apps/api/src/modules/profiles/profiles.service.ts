@@ -93,7 +93,6 @@ export class ProfilesService {
     return { ok: true };
   }
 
-  /** Validates the profile exists and belongs to the user. */
   async assertOwnership(userId: string, profileId: string): Promise<ProfileDto> {
     const row = await this.db.queryOne<ProfileDto>(
       `SELECT ${SELECT} FROM profiles WHERE id = $1 AND user_id = $2`,

@@ -15,8 +15,6 @@ export function HighlightBadge({
   highlight?: ContentHighlight | null;
   className?: string;
 }) {
-  // Guard against 'none', null/undefined, or any unmapped value (e.g. stale
-  // cached data from before the field existed) so we never render an empty badge.
   const label = highlight ? LABELS[highlight] : undefined;
   if (!label) return null;
 

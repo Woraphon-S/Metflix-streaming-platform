@@ -17,11 +17,6 @@ import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
-    // .env lives at the monorepo root, but `npm --workspace` runs the API with
-    // cwd = apps/api, so the default '.env' lookup misses it. Resolve the root
-    // .env from this file's compiled location (apps/api/dist) so local dev works
-    // regardless of cwd. In Docker, env comes from process.env (which still wins),
-    // so the missing file path is simply ignored.
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [join(__dirname, '../../../.env'), '.env'],

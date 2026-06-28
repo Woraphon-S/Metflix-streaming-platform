@@ -18,8 +18,6 @@ const PAGE_SIZE = 24;
 function SearchView() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  // The URL is the single source of truth for the active query. On desktop the
-  // navbar slide-out writes it; on mobile the inline input below writes it.
   const q = (searchParams.get('q') ?? '').trim();
 
   const [mobileValue, setMobileValue] = useState(q);
@@ -53,7 +51,6 @@ function SearchView() {
 
   return (
     <div className="mx-auto max-w-[1800px] px-4 pb-20 pt-8 sm:px-6 lg:px-8">
-      {/* Mobile-only inline search — desktop uses the navbar slide-out bar. */}
       <div className="mb-8 md:hidden">
         <Input
           name="search"
@@ -106,7 +103,6 @@ function SearchView() {
 export default function SearchPage() {
   return (
     <AppShell>
-      {/* useSearchParams requires a Suspense boundary to keep the build static-safe. */}
       <Suspense
         fallback={
           <div className="mx-auto max-w-[1800px] px-4 pt-8 sm:px-6 lg:px-8">

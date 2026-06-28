@@ -22,7 +22,6 @@ import type { MovieSummary, SeriesSummary } from '@metflix/shared-types';
 
 type CatalogItem = MovieSummary | SeriesSummary;
 
-// One consistent portrait ("tall") card, picked by item type.
 function PortraitCard({ item }: { item: CatalogItem }) {
   return 'seasonsCount' in item ? (
     <SeriesCard series={item} />
@@ -68,7 +67,6 @@ export default function BrowsePage() {
     [movies, series],
   );
 
-  // Group every title by genre, in the configured display order.
   const genreRows = useMemo(() => {
     const groups = new Map<string, CatalogItem[]>();
     for (const item of [...movies, ...series]) {
@@ -104,7 +102,6 @@ export default function BrowsePage() {
       )}
 
       <div className="relative z-10 mx-auto -mt-8 max-w-[1800px] space-y-12 px-4 pb-20 sm:px-6 lg:px-8">
-        {/* Top 10 — portrait posters with big rank numbers */}
         {topTen.length > 0 && (
           <ContentCarousel
             title="10 อันดับสูงสุดในไทยวันนี้"
@@ -115,8 +112,6 @@ export default function BrowsePage() {
                 key={`${'seasonsCount' in item ? 's' : 'm'}-${item.id}`}
                 className="relative flex-shrink-0 pl-[3rem] sm:pl-[4rem]"
               >
-                {/* Rank number sits behind the card and is absolute, so it never
-                    shifts the card — every poster stays on the same baseline. */}
                 <span className="pointer-events-none absolute bottom-0 left-0 z-0 select-none font-display font-black leading-[0.72] text-transparent text-[7rem] sm:text-[9rem] [-webkit-text-stroke:3px_rgba(148,163,184,0.5)]">
                   {i + 1}
                 </span>
@@ -128,7 +123,6 @@ export default function BrowsePage() {
           </ContentCarousel>
         )}
 
-        {/* Continue watching */}
         {user && continueQ.data && continueQ.data.length > 0 && (
           <ContentCarousel title="ดูต่อ" subtitle="ดูต่อจากที่ค้างไว้">
             {continueQ.data.map((item) => (
@@ -139,7 +133,6 @@ export default function BrowsePage() {
           </ContentCarousel>
         )}
 
-        {/* Loading skeleton row */}
         {loading && (
           <div className="flex gap-4 overflow-hidden">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -148,7 +141,6 @@ export default function BrowsePage() {
           </div>
         )}
 
-        {/* Category rows by genre — landscape cards */}
         {genreRows.map((row) => (
           <ContentCarousel key={row.genre} title={GENRE_LABELS[row.genre]}>
             {row.items.map((item) => (
@@ -166,7 +158,6 @@ export default function BrowsePage() {
           </ContentCarousel>
         ))}
 
-        {/* My List — landscape */}
         {user && myListQ.data && myListQ.data.length > 0 && (
           <ContentCarousel
             title="รายการของฉัน"

@@ -379,7 +379,6 @@ export default function AdminSeriesPage() {
         />
       )}
 
-      {/* Series modal */}
       <Modal
         open={seriesOpen}
         onClose={() => {
@@ -436,7 +435,6 @@ export default function AdminSeriesPage() {
         </form>
       </Modal>
 
-      {/* Season modal */}
       <Modal
         open={!!seasonOpenFor}
         onClose={() => setSeasonOpenFor(null)}
@@ -473,7 +471,6 @@ export default function AdminSeriesPage() {
         </form>
       </Modal>
 
-      {/* Episode modal */}
       <Modal
         open={!!episodeOpenFor}
         onClose={() => setEpisodeOpenFor(null)}

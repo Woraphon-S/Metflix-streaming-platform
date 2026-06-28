@@ -32,9 +32,7 @@ export function VideoPlayer({
       if (initialSeconds && initialSeconds > 1 && initialSeconds < video.duration - 10) {
         try {
           video.currentTime = initialSeconds;
-        } catch {
-          /* noop */
-        }
+        } catch {}
       }
     };
 

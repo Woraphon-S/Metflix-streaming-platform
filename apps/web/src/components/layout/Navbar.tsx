@@ -40,8 +40,6 @@ export function Navbar() {
   const searchRef = useRef<HTMLInputElement>(null);
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Debounced navigation to the results view. push the first time (so Back
-  // returns to the previous page), replace while already searching.
   const pushSearch = (value: string) => {
     if (searchTimer.current) clearTimeout(searchTimer.current);
     searchTimer.current = setTimeout(() => {
@@ -78,7 +76,6 @@ export function Navbar() {
 
   const switchProfile = (profile: Profile) => {
     setActiveProfile(profile);
-    // Re-fetch per-profile data (My List, Continue watching) for the new identity.
     qc.invalidateQueries();
     setProfileOpen(false);
     router.push('/browse');
@@ -94,7 +91,6 @@ export function Navbar() {
   useEffect(() => {
     setMenuOpen(false);
     setProfileOpen(false);
-    // Keep the search bar open + seeded while on the results page, collapse elsewhere.
     if (pathname === '/search') {
       setSearchOpen(true);
       const urlQ = new URLSearchParams(window.location.search).get('q') ?? '';

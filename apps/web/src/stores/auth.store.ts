@@ -46,7 +46,6 @@ export const useAuthStore = create<AuthState>()(
         activeProfile: state.activeProfile,
       }),
       onRehydrateStorage: () => (state) => {
-        // Keep the axios profile header in sync with the rehydrated profile.
         if (state?.activeProfile) setStoredProfileId(state.activeProfile.id);
         state?.markHydrated();
       },
